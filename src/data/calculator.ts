@@ -69,3 +69,23 @@ export const PROVINCIAL_TAX_RATES: Record<string, { federal: number; provincial:
     northwestterritories: { federal: 0.15, provincial: 0.059, cpp: 0.052, ei: 0.016 },
     nunavut: { federal: 0.15, provincial: 0.04, cpp: 0.052, ei: 0.016 }
 };
+
+// Approximate basic personal amount and common non-refundable credits per province (for rough net income).
+export const PROVINCIAL_TAX_CREDITS: Record<
+    string,
+    { federalBpa: number; provincialBpa: number; caregiver?: number; climateAction?: number }
+> = {
+    ontario: { federalBpa: 15000, provincialBpa: 11641, caregiver: 0 },
+    britishcolumbia: { federalBpa: 15000, provincialBpa: 11981, climateAction: 0 },
+    alberta: { federalBpa: 15000, provincialBpa: 21003 },
+    quebec: { federalBpa: 15000, provincialBpa: 17500 },
+    manitoba: { federalBpa: 15000, provincialBpa: 10855 },
+    saskatchewan: { federalBpa: 15000, provincialBpa: 17661 },
+    novascotia: { federalBpa: 15000, provincialBpa: 8481 },
+    newbrunswick: { federalBpa: 15000, provincialBpa: 12623 },
+    newfoundlandandlabrador: { federalBpa: 15000, provincialBpa: 10535 },
+    princeedwardisland: { federalBpa: 15000, provincialBpa: 10500 },
+    yukon: { federalBpa: 15000, provincialBpa: 15305 },
+    northwestterritories: { federalBpa: 15000, provincialBpa: 16406 },
+    nunavut: { federalBpa: 15000, provincialBpa: 17925 }
+};

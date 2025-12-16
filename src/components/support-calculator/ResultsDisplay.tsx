@@ -112,6 +112,37 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ inputs, results }) => {
                             </div>
                         </div>
 
+                        {results.specialExpensesTotal !== undefined && results.specialExpensesTotal > 0 && (
+                            <div className="bg-slate-900/80 rounded-xl border border-amber-400/50 p-4 shadow-inner shadow-amber-500/10">
+                                <p className="text-xs uppercase tracking-[0.2em] text-amber-200 font-semibold mb-1 flex items-center gap-2">
+                                    Section 7 Special Expenses (monthly)
+                                    <span className="text-[10px] text-amber-300 bg-amber-300/10 border border-amber-300/30 rounded px-2 py-0.5">
+                                        Net transfer impact
+                                    </span>
+                                </p>
+                                <div className="flex flex-wrap gap-4 text-sm text-slate-200">
+                                    <span>Total: {formatCurrency(results.specialExpensesTotal)}</span>
+                                    <span>
+                                        Payor Share ({results.specialExpensesPayorShare && results.specialExpensesTotal
+                                            ? Math.round((results.specialExpensesPayorShare / results.specialExpensesTotal) * 100)
+                                            : 0}%): {formatCurrency(results.specialExpensesPayorShare || 0)}
+                                    </span>
+                                    <span>
+                                        Recipient Share ({results.specialExpensesRecipientShare && results.specialExpensesTotal
+                                            ? Math.round((results.specialExpensesRecipientShare / results.specialExpensesTotal) * 100)
+                                            : 0}%): {formatCurrency(results.specialExpensesRecipientShare || 0)}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-amber-200 mt-2 flex items-center gap-2 bg-amber-400/10 border border-amber-300/40 rounded-lg px-3 py-2">
+                                    <svg className="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M12 6v12m0 0 4-4m-4 4-4-4" />
+                                    </svg>
+                                    Monthly transfer is adjusted by the pro-rata shares above.
+                                </p>
+                                <p className="text-xs text-slate-400 mt-1">Shared pro rata to net incomes.</p>
+                            </div>
+                        )}
+
                         <div className="bg-slate-900/80 rounded-xl border border-slate-800/80 p-4">
                             <p className="text-sm font-semibold text-white mb-2">Notes</p>
                             <ul className="space-y-2 text-sm text-slate-200 list-disc list-inside">

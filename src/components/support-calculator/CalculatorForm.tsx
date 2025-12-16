@@ -243,10 +243,72 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
         );
     };
 
-    const renderDateSection = () => (
+    const renderSpecialExpenses = () => (
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 space-y-3">
-            <InputLabel label="Key Dates" />
+            <InputLabel label="Section 7 Special Expenses" hint="Optional" />
             <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1" htmlFor="specialExpenseChildcare">
+                        Childcare
+                    </label>
+                    <input
+                        id="specialExpenseChildcare"
+                        type="number"
+                        min="0"
+                        step="100"
+                        className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/70"
+                        placeholder="0"
+                        value={inputs.specialExpenseChildcare}
+                        onChange={e => onInputChange('specialExpenseChildcare', e.target.value)}
+                        onWheel={e => e.currentTarget.blur()}
+                    />
+                    <ErrorText message={errors.specialExpenseChildcare} />
+                </div>
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1" htmlFor="specialExpenseEducation">
+                        Education
+                    </label>
+                    <input
+                        id="specialExpenseEducation"
+                        type="number"
+                        min="0"
+                        step="100"
+                        className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/70"
+                        placeholder="0"
+                        value={inputs.specialExpenseEducation}
+                        onChange={e => onInputChange('specialExpenseEducation', e.target.value)}
+                        onWheel={e => e.currentTarget.blur()}
+                    />
+                    <ErrorText message={errors.specialExpenseEducation} />
+                </div>
+                <div>
+                    <label className="block text-xs text-slate-400 mb-1" htmlFor="specialExpenseHealth">
+                        Health
+                    </label>
+                    <input
+                        id="specialExpenseHealth"
+                        type="number"
+                        min="0"
+                        step="100"
+                        className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/70"
+                        placeholder="0"
+                        value={inputs.specialExpenseHealth}
+                        onChange={e => onInputChange('specialExpenseHealth', e.target.value)}
+                        onWheel={e => e.currentTarget.blur()}
+                    />
+                    <ErrorText message={errors.specialExpenseHealth} />
+                </div>
+            </div>
+            <p className="text-xs text-slate-400">
+                Section 7 expenses are proportionately shared based on each parent&apos;s net income.
+            </p>
+        </div>
+    );
+
+    const renderDateSection = () => (
+            <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 space-y-3">
+                <InputLabel label="Key Dates" />
+                <div className="grid md:grid-cols-3 gap-4">
                 <div>
                     <label className="block text-xs text-slate-400 mb-1" htmlFor="dateOfCohabitation">
                         Cohabitation (optional)
@@ -285,6 +347,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     <ErrorText id="dateOfSeparation-error" message={errors.dateOfSeparation || errors.dates} />
                 </div>
             </div>
+            {renderSpecialExpenses()}
             {errors.dates && !errors.dateOfSeparation && (
                 <ErrorText id="dates-error" message={errors.dates} />
             )}

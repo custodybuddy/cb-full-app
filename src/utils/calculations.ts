@@ -4,7 +4,8 @@ import {
     PROVINCIAL_AVG_INCOMES,
     PROVINCIAL_BASELINE_INCOME,
     PROVINCIAL_FULL_TIME_INCOME,
-    PROVINCIAL_TAX_RATES
+    PROVINCIAL_TAX_RATES,
+    PROVINCIAL_TAX_CREDITS
 } from '@/data/calculator';
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -246,9 +247,12 @@ const calculateNetIncome = (income: number, province?: string) => {
     if (!income || income <= 0) return 0;
     const key = normalizeProvinceKey(province);
     const rates = PROVINCIAL_TAX_RATES[key] ?? { federal: 0.15, provincial: 0.1, cpp: 0.052, ei: 0.016 };
-    const basicFederal = 15000;
-    const basicProvincial = 11000;
-    const taxableIncome = Math.max(0, income - basicFederal - basicProvincial);
+    const credits = PROVINCIAL_TAX_CREDITS[key] ?? { federalBpa: 15000, provincialBpa: 11000, caregiver: 0, climateAction: 0 };
+    const basicFederal = credits.federalBpa;
+    const basicProvincial = credits.provincialBpa;
+    const caregiver = credits.caregiver ?? 0;
+    const climate = credits.climateAction ?? 0;
+    const taxableIncome = Math.max(0, income - basicFederal - basicProvincial - caregiver - climate);
     const tax =
         taxableIncome * (rates.federal + rates.provincial) +
         Math.max(0, Math.min(income, 66800) * rates.cpp) +
@@ -287,6 +291,14 @@ export const calculateSupport = (inputs: CalculatorInputs): CalculationResult =>
     const taxNote = approxTaxPct
         ? `Incomes adjusted to ~${approxTaxPct}% effective tax (fed/prov + CPP/EI and basic credits) for calculations.`
         : 'Incomes adjusted for estimated taxes/CPP/EI and basic credits.';
+    const specialExpenseTotal =
+        (parseFloat(inputs.specialExpenseChildcare) || 0) +
+        (parseFloat(inputs.specialExpenseEducation) || 0) +
+        (parseFloat(inputs.specialExpenseHealth) || 0);
+    const totalNet = Math.max(payorNet + recipientNet, 1);
+    const payorSpecialShare = specialExpenseTotal > 0 ? Math.round((payorNet / totalNet) * specialExpenseTotal) : 0;
+    const recipientSpecialShare =
+        specialExpenseTotal > 0 ? Math.max(0, Math.round(specialExpenseTotal - payorSpecialShare)) : 0;
 
     const {
         amount: childSupport,
@@ -360,6 +372,15 @@ export const calculateSupport = (inputs: CalculatorInputs): CalculationResult =>
         ...(undueHardshipApplied
             ? ['Undue hardship applied: lower-income parent’s child support obligation reduced to $0.']
             : []),
+        ...(specialExpenseTotal > 0
+            ? [
+                  `Section 7 special expenses entered: $${specialExpenseTotal.toLocaleString(
+                      'en-CA'
+                  )} (payor share ~$${payorSpecialShare.toLocaleString('en-CA')}, recipient share ~$${recipientSpecialShare.toLocaleString(
+                      'en-CA'
+                  )}).`
+              ]
+            : []),
         `Relationship length estimated at ${relationshipYears ? relationshipYears.toFixed(1) : '0'} years.`,
         ...(imputationNote ? [imputationNote] : []),
         ...(payorImputationNote ? [payorImputationNote] : []),
@@ -383,6 +404,9 @@ export const calculateSupport = (inputs: CalculatorInputs): CalculationResult =>
         combinedSupportLow,
         combinedSupportMid,
         combinedSupportHigh,
+        specialExpensesTotal: specialExpenseTotal,
+        specialExpensesPayorShare: payorSpecialShare,
+        specialExpensesRecipientShare: recipientSpecialShare,
         duration,
         notes
     };
