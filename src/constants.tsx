@@ -1,0 +1,345 @@
+import React from 'react';
+
+export interface Feature {
+    id: string;
+    icon: string;
+    title: React.ReactNode;
+    description: string;
+    buttonText: string;
+    link: string;
+    isModal: boolean;
+}
+
+export const features: Feature[] = [
+    {
+        id: 'report-incident',
+        icon: 'CalendarCheck',
+        title: <>Report An Incident: <span className="text-amber-400">Catch Them</span> Red-Handed.</>,
+        description: 'Transform toxic behavior into court-ready evidence with guided documentation, timestamps, and professional exports.',
+        buttonText: 'DOCUMENT THEIR LIES',
+        link: '#',
+        isModal: true,
+    },
+    {
+        id: 'case-analysis',
+        icon: 'Swords',
+        title: <>Family Law Case Analysis Tool: Level the <span className="text-amber-400">Playing Field</span>.</>,
+        description: 'Decode legal documents with AI analysis, get plain English explanations, and receive next-step recommendations.',
+        buttonText: 'EXPOSE THE TRUTH',
+        link: '#',
+        isModal: true,
+    },
+    {
+        id: 'email-buddy',
+        icon: 'MailPlus',
+        title: <>Email Law Buddy: <span className="text-amber-400">Shut Down</span> the Games.</>,
+        description: 'Stop emotional manipulation with professional, AI-drafted responses that maintain composure and build your legal case.',
+        buttonText: 'STOP THE GAMES',
+        link: '#',
+        isModal: true,
+    },
+    {
+        id: 'false-allegation',
+        icon: 'ShieldHalfIcon',
+        title: <>False Allegation: <span className="text-amber-400">Response Drafting</span>.</>,
+        description: 'Produce structured, factual rebuttals to distorted claims.',
+        buttonText: 'DRAFT REBUTTAL',
+        link: '#',
+        isModal: true,
+    },
+];
+
+export interface Book {
+    imageUrl: string;
+    alt: string;
+    title: string;
+    amazonLink: string;
+    ariaLabel: string;
+}
+
+export const books: Book[] = [
+    {
+      imageUrl: "https://m.media-amazon.com/images/I/81WNrK+icJL._SX342_.jpg",
+      alt: "Book cover for Co-parenting with a Toxic Ex",
+      title: "Co-parenting with a Toxic Ex by Amy J.L. Baker and Paul R. Fine",
+      amazonLink: "https://www.amazon.ca/dp/B0719CH1D3?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Co-parenting with a Toxic Ex on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://m.media-amazon.com/images/I/71C30NlvpeL._SY466_.jpg",
+      alt: "Book cover for BIFF: Quick Responses to High-Conflict People",
+      title: "BIFF: Quick Responses to High-Conflict People by Bill Eddy",
+      amazonLink: "https://www.amazon.ca/dp/1936268728?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View BIFF: Quick Responses to High-Conflict People on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://m.media-amazon.com/images/I/5165NcbMc4L._SY445_SX342_QL70_ML2_.jpg",
+      alt: "Book cover for Divorce Poison",
+      title: "Divorce Poison by Dr. Richard A. Warshak",
+      amazonLink: "https://www.amazon.ca/dp/B06ZYG3KFX?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Divorce Poison on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://books.google.com/books/content?id=cYmQEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
+      alt: "Book cover for The Co-Parenting Handbook",
+      title: "The Co-Parenting Handbook by Karen Bonnell",
+      amazonLink: "https://www.amazon.ca/dp/1632171465?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View The Co-Parenting Handbook on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://prodimage.images-bn.com/pimages/9781499677522_p0_v1_s1200x630.jpg",
+      alt: "Book cover for Mindful Co-Parenting",
+      title: "Mindful Co-Parenting by Jeremy S. Gaies and James B. Morris Jr.",
+      amazonLink: "https://www.amazon.ca/dp/B0711GNLJF?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Mindful Co-Parenting on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://m.media-amazon.com/images/I/81zEQXynx0L._SX342_.jpg",
+      alt: "Book cover for The High-Conflict Custody Battle",
+      title: "The High-Conflict Custody Battle by Amy J.L. Baker, J. Michael Bone, and Brian Ludmer",
+      amazonLink: "https://www.amazon.ca/dp/B07RMJL37L?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View The High-Conflict Custody Battle on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://m.media-amazon.com/images/I/81REa2yzs9L._SY466_.jpg",
+      alt: "Book cover for Didn't See That Coming",
+      title: "Didn't See That Coming: Putting Life Back Together When Your World Falls Apart by Rachel Hollis",
+      amazonLink: "https://www.amazon.ca/s?k=Didn%27t+See+That+Coming+Rachel+Hollis&tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Didn't See That Coming by Rachel Hollis on Amazon (paid link)"
+    },
+    {
+      imageUrl: "http://books.google.com/books/content?id=B888lQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
+      alt: "Book cover for Divorcing a Narcissist: One Mom's Battle",
+      title: "Divorcing a Narcissist: One Mom's Battle by Tina Swithin",
+      amazonLink: "https://www.amazon.ca/s?k=Divorcing+a+Narcissist+Tina+Swithin&tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Divorcing a Narcissist: One Mom's Battle on Amazon (paid link)"
+    },
+    {
+      imageUrl: "https://prodimage.images-bn.com/pimages/9781801203517_p0_v1_s1200x630.jpg",
+      alt: "Book cover for Dark Psychology and Manipulation",
+      title: "Dark Psychology and Manipulation by William Cooper",
+      amazonLink: "https://www.amazon.ca/dp/B08M8Y5G36?tag=custodybudd0c-20&language=en_CA",
+      ariaLabel: "View Dark Psychology and Manipulation on Amazon (paid link)"
+    }
+];
+
+export interface LegalAidService {
+    province: string;
+    url: string;
+}
+
+export const legalAidServices: LegalAidService[] = [
+    { province: 'Ontario', url: 'https://www.legalaid.on.ca/' },
+    { province: 'British Columbia', url: 'https://legalaid.bc.ca/' },
+    { province: 'Alberta', url: 'https://www.legalaid.ab.ca/' },
+    { province: 'Quebec', url: 'https://www.csj.qc.ca/' },
+    { province: 'Manitoba', url: 'https://www.legalaid.mb.ca/' },
+    { province: 'Saskatchewan', url: 'https://www.legalaid.sk.ca/' },
+    { province: 'Nova Scotia', url: 'https://www.nslegalaid.ca/' },
+    { province: 'New Brunswick', url: 'https://www.legalaid.nb.ca/' },
+    { province: 'Newfoundland & Labrador', url: 'https://www.legalaid.nl.ca/' },
+    { province: 'Prince Edward Island', url: 'https://www.legalinfopei.ca/legal-aid/' },
+    { province: 'Yukon', url: 'https://www.legalaid.yk.ca/' },
+    { province: 'Northwest Territories', url: 'https://www.justice.gov.nt.ca/en/boards-agencies/legal-aid-commission/' },
+    { province: 'Nunavut', url: 'https://www.nulas.ca/' },
+];
+
+export interface EmailTemplate {
+    category: 'Scheduling' | 'Financial' | 'Communication Boundaries';
+    title: string;
+    description: string;
+    body: string;
+}
+
+export const emailTemplates: EmailTemplate[] = [
+    {
+        category: 'Scheduling',
+        title: 'Responding to a Schedule Change Request',
+        description: 'A firm but polite BIFF-style response to a unilateral schedule change.',
+        body: `Subject: Re: [Original Subject]
+
+Hi [Co-Parent's Name],
+
+Thanks for the information regarding the schedule.
+
+Per our court order, the exchange is set for [Day] at [Time]. I will be adhering to that schedule. I am not able to accommodate the change you requested.
+
+Best,
+[Your Name]`
+    },
+    {
+        category: 'Scheduling',
+        title: 'Confirming a Holiday Schedule',
+        description: 'Proactively confirm an upcoming holiday exchange to prevent confusion.',
+        body: `Subject: Confirming Upcoming [Holiday Name] Schedule
+
+Hi [Co-Parent's Name],
+
+I am writing to confirm the upcoming [Holiday Name] schedule for the children.
+
+As per our agreement (Clause [Clause Number]), I will have the children from [Start Date and Time] to [End Date and Time]. The exchange will take place at [Location].
+
+Please confirm you have the same understanding.
+
+Thanks,
+[Your Name]`
+    },
+    {
+        category: 'Financial',
+        title: 'Requesting Reimbursement for an Expense',
+        description: 'A clear, factual request for a shared expense, including necessary documentation.',
+        body: `Subject: Reimbursement for [Expense Name]
+
+Hi [Co-Parent's Name],
+
+I am writing to request reimbursement for my half of the [Expense Name] for [Child's Name].
+
+The total cost was $[Total Amount]. Your half is $[Amount Owed]. I have attached a copy of the receipt for your records.
+
+Please send the payment via [Payment Method] by [Date].
+
+Thank you,
+[Your Name]`
+    },
+    {
+        category: 'Financial',
+        title: 'Following Up on Unpaid Expense',
+        description: 'A brief, factual follow-up on a previously requested reimbursement.',
+        body: `Subject: Follow-up: Reimbursement for [Expense Name]
+
+Hi [Co-Parent's Name],
+
+This is a follow-up to my email on [Date of Original Email] regarding the reimbursement for [Expense Name].
+
+As of today, the payment of $[Amount Owed] has not been received. Please let me know when I can expect it.
+
+Thanks,
+[Your Name]`
+    },
+    {
+        category: 'Communication Boundaries',
+        title: 'Setting Communication Boundaries (BIFF)',
+        description: 'Respond to a long, emotional, or accusatory email by redirecting to factual matters.',
+        body: `Subject: Re: [Original Subject]
+
+Hi [Co-Parent's Name],
+
+I have received your email.
+
+Moving forward, please only contact me regarding logistical matters related to the children. I will only be responding to communications that are brief, informative, and focused on co-parenting decisions.
+
+Best,
+[Your Name]`
+    },
+    {
+        category: 'Communication Boundaries',
+        title: 'Response to False Accusations (Grey Rock)',
+        description: 'A minimal, non-engaging response to false accusations to avoid fueling the conflict.',
+        body: `Subject: Re: [Original Subject]
+
+Your email has been received and its contents have been noted.
+
+[Your Name]`
+    },
+    {
+        category: 'Scheduling',
+        title: 'Proposing a One-Time Schedule Change',
+        description: 'A clear and respectful way to ask for a temporary change, providing a reason and a proposed alternative.',
+        body: `Subject: Request for Schedule Change on [Date]
+
+Hi [Co-Parent's Name],
+
+I am writing to request a one-time change to the parenting schedule. I have a [Brief, Neutral Reason, e.g., 'work commitment'] on [Date], and I would like to propose we swap weekends.
+
+I can take the children on your weekend of [Proposed New Date], and you can have them on my scheduled weekend of [Original Date].
+
+Please let me know if this works for you by [Date to Respond By] so we can plan accordingly.
+
+Thanks,
+[Your Name]`
+    },
+    {
+        category: 'Scheduling',
+        title: 'Addressing Consistent Lateness',
+        description: 'A firm BIFF-style email to address a pattern of lateness for exchanges and establish a clear boundary.',
+        body: `Subject: Regarding Exchange Times
+
+Hi [Co-Parent's Name],
+
+I am writing to address the exchange times for the children.
+
+The court order states that exchanges are to occur at [Time]. Over the past [Number] exchanges on [List of Dates], you have been late by [X, Y, and Z] minutes respectively. This creates uncertainty for the children.
+
+Moving forward, I will be at the exchange location at [Time] and will wait for 15 minutes. If you are later than that, I will have to document it as a missed exchange. Please confirm you will adhere to the schedule.
+
+Best,
+[Your Name]`
+    },
+    {
+        category: 'Financial',
+        title: 'Disagreeing with a Section 7 Expense',
+        description: 'A formal response when you do not agree that a proposed cost is a valid Section 7 / special expense.',
+        body: `Subject: Re: Expense for [Expense Name]
+
+Hi [Co-Parent's Name],
+
+I have received your request for payment regarding [Expense Name].
+
+After reviewing our separation agreement (Clause [Clause Number]), I do not agree that this qualifies as a special or extraordinary expense that we are required to share. My understanding is that this falls under [e.g., 'regular monthly child support', 'discretionary spending'].
+
+Therefore, I am not able to contribute to this expense.
+
+Regards,
+[Your Name]`
+    },
+    {
+        category: 'Financial',
+        title: 'Proposing a Payment Plan',
+        description: 'Use this when you agree to a large, shared expense but need to arrange a payment schedule.',
+        body: `Subject: Payment for [Child's Name]'s [Expense Name]
+
+Hi [Co-Parent's Name],
+
+Thanks for sending over the information for [Child's Name]'s [Expense Name]. I agree this is a necessary expense.
+
+Due to the size of the amount ($[Total Amount]), I would like to propose a payment plan for my half ($[Your Half]). I can make [Number] payments of $[Payment Amount] on the following dates:
+- [Date 1]
+- [Date 2]
+- [Date 3]
+
+Please let me know if this payment schedule is acceptable to you.
+
+Thanks,
+[Your Name]`
+    },
+    {
+        category: 'Communication Boundaries',
+        title: 'Moving Communication to a Parenting App',
+        description: 'To formalize communication and move it to a trackable platform like OurFamilyWizard or 2houses.',
+        body: `Subject: Moving our Co-Parenting Communication
+
+Hi [Co-Parent's Name],
+
+To ensure our communications are organized and focused on the children, I will be using [Parenting App Name] for all co-parenting matters moving forward, effective [Date].
+
+I have sent you an invitation to join. Please use the platform to discuss schedules, expenses, and other child-related topics. This will help us keep a clear record and avoid misunderstandings.
+
+Thank you,
+[Your Name]`
+    },
+    {
+        category: 'Communication Boundaries',
+        title: 'Responding to Intrusive Questions',
+        description: 'A firm but polite way to shut down questions about your personal life that are not relevant to co-parenting.',
+        body: `Subject: Re: [Original Subject]
+
+Hi [Co-Parent's Name],
+
+I've received your email.
+
+My personal life does not impact the children and is not a topic for our discussion. Please keep our communication focused solely on co-parenting logistics.
+
+Best,
+[Your Name]`
+    }
+];
