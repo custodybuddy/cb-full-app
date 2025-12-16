@@ -1,12 +1,32 @@
-import OpenAI from 'openai';
-import { resolveApiKey } from './env';
+import { resolveAIProxyUrl, resolveModel } from './env';
+import { AIServiceError } from '@/utils/aiError';
 
-let aiClient: OpenAI | null = null;
+export interface ProxyAIResponse {
+    output_text?: string | null;
+    output?: Array<{ content?: Array<{ text?: string | null }> }>;
+}
 
-export const getOpenAIClient = (): OpenAI => {
-    if (!aiClient) {
-        const apiKey = resolveApiKey();
-        aiClient = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
+type ProxyPayload = {
+    model: string;
+    input: string | string[];
+    instructions: string;
+};
+
+export const callAIProxy = async (payload: ProxyPayload): Promise<ProxyAIResponse> => {
+    const endpoint = resolveAIProxyUrl();
+    if (!endpoint) {
+        throw new AIServiceError('missing_api_key', 'AI proxy URL is not configured.');
     }
-    return aiClient;
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, model: payload.model || resolveModel() }),
+    });
+
+    if (!response.ok) {
+        throw new AIServiceError('network', `AI proxy returned ${response.status}`);
+    }
+
+    return response.json() as Promise<ProxyAIResponse>;
 };

@@ -2,7 +2,7 @@ import {
     getJurisdictionMetadata,
     normalizeJurisdiction,
     JurisdictionMetadata,
-} from '../constants/jurisdictions';
+} from '../data/jurisdictions';
 
 interface JurisdictionContext {
     display: string;

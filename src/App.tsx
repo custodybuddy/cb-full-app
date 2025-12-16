@@ -1,15 +1,15 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { routes, externalLinks, NavLink } from './routes';
-import { ModalProvider } from './contexts/ModalContext';
-import GlobalModals from './components/GlobalModals';
-import { useConsent } from './hooks/useConsent';
-import ConsentModal from './components/ConsentModal';
-import SpinnerIcon from './components/icons/SpinnerIcon';
-import TopLoadingBar from './components/TopLoadingBar';
-import { isOpenAIConfigured } from './utils/envUtils';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { routes, externalLinks, NavLink } from '@/routes';
+import { ModalProvider } from '@/contexts/ModalContext';
+import GlobalModals from '@/components/GlobalModals';
+import { useConsent } from '@/hooks/useConsent';
+import ConsentModal from '@/components/ConsentModal';
+import SpinnerIcon from '@/components/icons/SpinnerIcon';
+import TopLoadingBar from '@/components/TopLoadingBar';
+import { isOpenAIConfigured } from '@/utils/envUtils';
 
 const PageFallback: React.FC = () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -35,7 +35,7 @@ const App: React.FC = () => {
     const headerNavLinks: NavLink[] = [
         ...routes
             .filter(r => r.inHeader)
-            .map(r => ({ href: r.path.substring(1), text: r.label, isExternal: false })),
+            .map(r => ({ href: r.path, text: r.label, isExternal: false })),
         ...externalLinks
             .filter(l => l.inHeader)
             .map(l => ({ href: l.href, text: l.text, isExternal: true }))
@@ -44,7 +44,7 @@ const App: React.FC = () => {
     const footerNavLinks: NavLink[] = [
         ...routes
             .filter(r => r.inFooter)
-            .map(r => ({ href: r.path.substring(1), text: r.label, isExternal: false })),
+            .map(r => ({ href: r.path, text: r.label, isExternal: false })),
         ...externalLinks
             .filter(l => l.inFooter)
             .map(l => ({ href: l.href, text: l.text, isExternal: true }))

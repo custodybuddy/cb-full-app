@@ -14,7 +14,6 @@ export const readOpenAIKey = (): string | null => {
         readEnv('VITE_OPENAI_API_KEY') ||
         readEnv('OPENAI_API_KEY') ||
         readEnv('API_KEY') ||
-        readEnv('GEMINI_API_KEY') ||
         null
     );
 };
@@ -27,4 +26,12 @@ export const readOpenAIModel = (): string => {
     );
 };
 
-export const isOpenAIConfigured = (): boolean => Boolean(readOpenAIKey());
+export const readAIProxyUrl = (): string | null => {
+    return (
+        readEnv('VITE_AI_PROXY_URL') ||
+        readEnv('AI_PROXY_URL') ||
+        null
+    );
+};
+
+export const isOpenAIConfigured = (): boolean => Boolean(readAIProxyUrl() || readOpenAIKey());

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useIncidentReportState, useIncidentReportActions } from '../../hooks/useIncidentReporter';
 import { useTextToSpeech } from '../../hooks/useTextToSpeech';
 import { useTextSizer } from '../../hooks/useTextSizer';
@@ -56,8 +56,8 @@ const ReportResult: React.FC = () => {
         }
     };
 
-    const handleExportTxt = () => {
-        if (!report) return;
+    const txtExport = useMemo(() => {
+        if (!report) return null;
         const isoDate = getISODate();
         const filename = `CustodyBuddy-Incident-Report-${isoDate}.txt`;
         const content = `
@@ -82,8 +82,13 @@ ${report.legalInsights}
 
 --- LEGAL REFERENCES & SOURCES ---
 - See attached references in the report.
-        `;
-        exportTextFile(content.trim(), filename);
+        `.trim();
+        return { filename, content };
+    }, [incidentData.jurisdiction, report]);
+
+    const handleExportTxt = () => {
+        if (!txtExport) return;
+        exportTextFile(txtExport.content, txtExport.filename);
     };
 
     const handlePlayPause = () => {

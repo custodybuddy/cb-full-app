@@ -2,6 +2,7 @@ import React, { createContext, useState, useCallback, ReactNode, useMemo } from 
 import { analyzeAndDraftEmailResponses } from '../services/ai/emailBuddyService';
 import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { EmailBuddyResponse, ToneOption } from '../types/ai';
+import { validateEmailBuddyInput } from '@/validation/forms';
 
 // Re-export type for convenience
 export type { EmailBuddyResponse, ToneOption };
@@ -48,10 +49,11 @@ export const EmailBuddyProvider: React.FC<{ children: ReactNode }> = ({ children
 
     const handleGenerateResponses = useCallback(async () => {
         let emailToAnalyze = '';
-        
+
         setState(s => {
-            if (!s.receivedEmail.trim()) {
-                return { ...s, error: 'Please paste the email you received to get started.' };
+            const validation = validateEmailBuddyInput(s.receivedEmail);
+            if (!validation.isValid) {
+                return { ...s, error: validation.error };
             }
             emailToAnalyze = s.receivedEmail;
             return { ...s, isLoading: true, error: null, response: null };

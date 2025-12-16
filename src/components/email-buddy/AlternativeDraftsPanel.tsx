@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useMemo } from 'react';
 import DraftDisplay from './DraftDisplay';
 
 interface AlternativeDraftsPanelProps {
@@ -9,6 +9,10 @@ type Tab = "Grey Rock" | "Friendly Assertive";
 
 const AlternativeDraftsPanel: React.FC<AlternativeDraftsPanelProps> = ({ drafts }) => {
     const tabs: Tab[] = ["Grey Rock", "Friendly Assertive"];
+    const tabIds = useMemo(
+        () => tabs.map(tab => tab.replace(/\s+/g, '-')),
+        [tabs]
+    );
     const [activeTab, setActiveTab] = useState<Tab>(tabs[0]);
 
     const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -24,10 +28,10 @@ const AlternativeDraftsPanel: React.FC<AlternativeDraftsPanelProps> = ({ drafts 
         if (newIndex !== currentIndex) {
             const newTab = tabs[newIndex];
             setActiveTab(newTab);
-            const tabId = `alt-draft-tab-${newTab.replace(/\s+/g, '-')}`;
+            const tabId = `alt-draft-tab-${tabIds[newIndex]}`;
             document.getElementById(tabId)?.focus();
         }
-    }, [tabs, activeTab]);
+    }, [activeTab, tabIds, tabs]);
 
 
     return (
@@ -35,13 +39,13 @@ const AlternativeDraftsPanel: React.FC<AlternativeDraftsPanelProps> = ({ drafts 
             <h4 className="text-md font-bold text-gray-200 mb-2">Alternative Styles</h4>
             <div className="border-b border-slate-700 mb-2">
                 <div role="tablist" aria-label="Alternative Draft Styles" className="-mb-px flex space-x-4">
-                    {tabs.map((tab) => (
+                    {tabs.map((tab, idx) => (
                         <button
                             key={tab}
-                            id={`alt-draft-tab-${tab.replace(/\s+/g, '-')}`}
+                            id={`alt-draft-tab-${tabIds[idx]}`}
                             role="tab"
                             aria-selected={activeTab === tab}
-                            aria-controls={`alt-draft-panel-${tab.replace(/\s+/g, '-')}`}
+                            aria-controls={`alt-draft-panel-${tabIds[idx]}`}
                             tabIndex={activeTab === tab ? 0 : -1}
                             onClick={() => setActiveTab(tab)}
                             onKeyDown={handleKeyDown}
@@ -58,13 +62,13 @@ const AlternativeDraftsPanel: React.FC<AlternativeDraftsPanelProps> = ({ drafts 
             </div>
 
             <div className="flex-grow">
-                {tabs.map(tab => (
+                {tabs.map((tab, idx) => (
                     <div
                         key={tab}
-                        id={`alt-draft-panel-${tab.replace(/\s+/g, '-')}`}
+                        id={`alt-draft-panel-${tabIds[idx]}`}
                         role="tabpanel"
                         tabIndex={0}
-                        aria-labelledby={`alt-draft-tab-${tab.replace(/\s+/g, '-')}`}
+                        aria-labelledby={`alt-draft-tab-${tabIds[idx]}`}
                         className={`${activeTab === tab ? 'block' : 'hidden'} h-full focus:outline-none`}
                     >
                         <DraftDisplay

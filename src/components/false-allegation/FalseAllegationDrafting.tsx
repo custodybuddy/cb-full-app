@@ -152,7 +152,7 @@ const FalseAllegationDrafting: React.FC<FalseAllegationDraftingProps> = ({ isOpe
                         )}
                     </div>
                 );
-            case 2:
+            case 2: {
                 const categories = [
                     'Parenting time / access',
                     'Communication behavior',
@@ -282,7 +282,8 @@ const FalseAllegationDrafting: React.FC<FalseAllegationDraftingProps> = ({ isOpe
                         </div>
                     </div>
                 );
-            case 3:
+            }
+            case 3: {
                 const [currentEvidenceAllegationIndex, setCurrentEvidenceAllegationIndex] = useState(0);
                 
                 const currentEvidenceAllegation = state.allegations[currentEvidenceAllegationIndex];
@@ -372,6 +373,7 @@ const FalseAllegationDrafting: React.FC<FalseAllegationDraftingProps> = ({ isOpe
                         </div>
                     </div>
                 );
+            }
             case 4:
                 // AI Response and Safeguard Review
                 return (

@@ -1,4 +1,4 @@
-import { IncidentReport, CaseAnalysisReport } from '../types/ai';
+import { IncidentReport, CaseAnalysisReport } from '@/types/ai';
 import DOMPurify from 'dompurify';
 
 /**

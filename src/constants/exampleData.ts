@@ -1,4 +1,4 @@
-import { EmailBuddyResponse } from '../types/ai';
+import { EmailBuddyResponse } from '@/types/ai';
 
 /**
  * Contains example data for the Email Law Buddy tool.

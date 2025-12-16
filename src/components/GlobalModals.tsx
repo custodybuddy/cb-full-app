@@ -6,8 +6,8 @@ import { IncidentReportProvider } from '../contexts/IncidentReportContext';
 import { EmailBuddyProvider } from '../contexts/EmailBuddyContext';
 import { CaseAnalysisProvider } from '../contexts/CaseAnalysisContext';
 import { FalseAllegationProvider } from '../contexts/FalseAllegationContext';
+import { ModalType } from '../contexts/ModalContext';
 
-// Lazy load the components that are opened in modals
 const CaseAnalysisTool = lazy(() => import('./CaseAnalysisTool'));
 const EmailLawBuddy = lazy(() => import('./EmailLawBuddy'));
 const ReportAnIncident = lazy(() => import('./report-incident/ReportAnIncident'));
@@ -22,58 +22,70 @@ const SuspenseFallback: React.FC = () => (
     </div>
 );
 
+type ModalEntry = {
+    id: ModalType;
+    title: string;
+    getElement: () => React.ReactNode;
+};
+
+const modalRegistry: ModalEntry[] = [
+    {
+        id: 'case-analysis',
+        title: 'Family Law Case Analysis Tool',
+        getElement: () => (
+            <CaseAnalysisProvider>
+                <Suspense fallback={<SuspenseFallback />}>
+                    <CaseAnalysisTool isOpen />
+                </Suspense>
+            </CaseAnalysisProvider>
+        )
+    },
+    {
+        id: 'email-buddy',
+        title: 'Email Law Buddy',
+        getElement: () => (
+            <EmailBuddyProvider>
+                <Suspense fallback={<SuspenseFallback />}>
+                    <EmailLawBuddy isOpen />
+                </Suspense>
+            </EmailBuddyProvider>
+        )
+    },
+    {
+        id: 'report-incident',
+        title: 'Report An Incident',
+        getElement: () => (
+            <IncidentReportProvider>
+                <Suspense fallback={<SuspenseFallback />}>
+                    <ReportAnIncident isOpen />
+                </Suspense>
+            </IncidentReportProvider>
+        )
+    },
+    {
+        id: 'false-allegation',
+        title: 'False Allegation Response Drafting',
+        getElement: () => (
+            <FalseAllegationProvider>
+                <Suspense fallback={<SuspenseFallback />}>
+                    <FalseAllegationDrafting isOpen onClose={() => undefined} />
+                </Suspense>
+            </FalseAllegationProvider>
+        )
+    }
+];
 
 const GlobalModals: React.FC = () => {
     const { activeModal, closeModal } = useModal();
+    const activeEntry = modalRegistry.find(entry => entry.id === activeModal);
 
     return (
-        <>
-            <Modal
-                isOpen={activeModal === 'case-analysis'}
-                onClose={closeModal}
-                title="Family Law Case Analysis Tool"
-            >
-                <CaseAnalysisProvider>
-                    <Suspense fallback={<SuspenseFallback />}>
-                        <CaseAnalysisTool isOpen={activeModal === 'case-analysis'} />
-                    </Suspense>
-                </CaseAnalysisProvider>
+        activeEntry ? (
+            <Modal isOpen onClose={closeModal} title={activeEntry.title}>
+                {activeEntry.getElement()}
             </Modal>
-            <Modal
-                isOpen={activeModal === 'email-buddy'}
-                onClose={closeModal}
-                title="Email Law Buddy"
-            >
-                <EmailBuddyProvider>
-                    <Suspense fallback={<SuspenseFallback />}>
-                        <EmailLawBuddy isOpen={activeModal === 'email-buddy'} />
-                    </Suspense>
-                </EmailBuddyProvider>
-            </Modal>
-            <Modal
-                isOpen={activeModal === 'report-incident'}
-                onClose={closeModal}
-                title="Report An Incident"
-            >
-                <IncidentReportProvider>
-                    <Suspense fallback={<SuspenseFallback />}>
-                        <ReportAnIncident isOpen={activeModal === 'report-incident'} />
-                    </Suspense>
-                </IncidentReportProvider>
-            </Modal>
-            <Modal
-                isOpen={activeModal === 'false-allegation'}
-                onClose={closeModal}
-                title="False Allegation Response Drafting"
-            >
-                <FalseAllegationProvider>
-                    <Suspense fallback={<SuspenseFallback />}>
-                        <FalseAllegationDrafting isOpen={activeModal === 'false-allegation'} onClose={closeModal} />
-                    </Suspense>
-                </FalseAllegationProvider>
-            </Modal>
-        </>
+        ) : null
     );
-}
+};
 
 export default GlobalModals;

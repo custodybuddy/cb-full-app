@@ -13,6 +13,7 @@ const TemplateLibraryPage = lazy(() => import('./pages/TemplateLibraryPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsOfUsePage = lazy(() => import('./pages/TermsOfUsePage'));
 const JurisdictionWizardPage = lazy(() => import('./pages/JurisdictionWizardPage'));
+const SupportCalculatorPage = lazy(() => import('./pages/SupportCalculatorPage'));
 
 export interface RouteConfig {
     path: string;
@@ -48,6 +49,7 @@ export const routes: RouteConfig[] = [
     { path: '/privacy', label: 'Privacy Policy', component: PrivacyPolicyPage, inHeader: false, inFooter: true },
     { path: '/terms', label: 'Terms of Use', component: TermsOfUsePage, inHeader: false, inFooter: true },
     { path: '/onboarding', label: 'Jurisdiction Onboarding', component: JurisdictionWizardPage, inHeader: false, inFooter: false },
+    { path: '/support-calculator', label: 'Calculator', component: SupportCalculatorPage, inHeader: true, inFooter: true },
 ];;
 
 export const externalLinks: ExternalLinkConfig[] = [

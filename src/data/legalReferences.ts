@@ -4,7 +4,7 @@ import {
   getJurisdictionMetadata,
   normalizeJurisdiction,
   type JurisdictionMetadata,
-} from '@/constants/jurisdictions';
+} from './jurisdictions';
 
 export const SITE_LINKS = {
   home: 'https://custodybuddy.com/',
@@ -309,33 +309,6 @@ export const behaviorToBadges: Record<BehaviorType, string[]> = {
   propertyDamage: ['Property Damage'],
 };
 
-// Simple starter mapping; extend with full lists later.
-const CANADA_FEDERAL_SIMPLE = {
-  divorceActFamilyViolence: {
-    label: 'Divorce Act — Family Violence (s.2(1))',
-    link: 'https://laws-lois.justice.gc.ca/eng/acts/d-3.4/page-1.html#h-1172378',
-  },
-  divorceActBestInterests: {
-    label: 'Divorce Act — Best Interests (s.16(4))',
-    link: 'https://laws-lois.justice.gc.ca/eng/acts/d-3.4/page-3.html#h-1172571',
-  },
-};
-
-const CANADA_PROVINCES_SIMPLE: Record<string, StatuteRef[]> = {
-  ontario: [
-    {
-      label: 'Ontario Children’s Law Reform Act — s.24 (Best Interests)',
-      link: 'https://www.ontario.ca/laws/statute/90c12#BK9',
-    },
-  ],
-  britishcolumbia: [
-    {
-      label: 'BC Family Law Act — s.37 (Best Interests)',
-      link: 'https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/11025_03#section37',
-    },
-  ],
-};
-
 const US_UCCJEA: StatuteRef = {
   label: 'UCCJEA — Child Custody Jurisdiction',
   link: 'https://www.uniformlaws.org/acts/uccjea',
@@ -363,8 +336,8 @@ export function getStatutesForJurisdiction(j: JurisdictionInfo, behaviorType?: B
   if (j.country === 'US') {
     add(US_UCCJEA);
     const state = US_COERCIVE_CONTROL_LAWS[normalizeJurisdiction(j.id)];
-    if (state) {
-      add({ label: `${j.region} Coercive Control Law`, link: state.coerciveControl });
+    if (state && typeof state !== 'boolean') {
+      add({ label: `${j.region} Coercive Control Law`, link: (state as any).coerciveControl ?? state });
     }
   }
 
@@ -426,7 +399,7 @@ export const mapAllegationToStatutes = (behaviorType: string, jurisdiction: Juri
     if (state) {
       statutes.push({
         label: `${jurisdiction.region} Coercive Control Law`,
-        link: state.coerciveControl,
+        link: (state as any).coerciveControl ?? state,
       });
     }
   }

@@ -36,7 +36,7 @@ describe('feature AI services', () => {
         await analyzeAndDraftEmailResponses('hello world');
         const call = mockGen.mock.calls[0][0];
         expect(call.userPrompt).toBe('hello world');
-        expect(call.systemInstruction).toMatch(/communication analyst/i);
+        expect(call.systemInstruction).toMatch(/high-conflict co-parenting emails/i);
     });
 
     it('explainJargon formats the prompt with term and context', async () => {

@@ -1,3 +1,5 @@
+export { features, Feature } from './features';
+export { books, legalAidServices, emailTemplates, EmailTemplate } from './content';
 export {
     COERCIVE_CONTROL_GLOSSARY,
     CANADA_FEDERAL,
@@ -17,6 +19,6 @@ export {
     RESOURCE_LINKS,
     getStatutesForJurisdiction,
     JURISDICTION_NAMES,
-} from './data';
+} from '../data/legalReferences';
 
-export { JURISDICTIONS, getJurisdictionMetadata, normalizeJurisdiction } from './jurisdictions';
+export { JURISDICTIONS, getJurisdictionMetadata, normalizeJurisdiction } from '../data/jurisdictions';

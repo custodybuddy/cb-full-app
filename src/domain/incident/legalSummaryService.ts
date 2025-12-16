@@ -5,7 +5,7 @@ import type {
     JurisdictionInfo,
     BehaviorType,
 } from '@/types/legal';
-import { mapAllegationToStatutes } from '@/constants/data';
+import { mapAllegationToStatutes } from '@/data/legalReferences';
 import { getCurrentIsoTimestamp } from '@/utils/dateTime';
 
 const readEnv = (key: string): string | undefined => {

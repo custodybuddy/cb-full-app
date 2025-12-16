@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { useCaseAnalysisState, useCaseAnalysisActions } from '../hooks/useCaseAnalysis';
+import { useCaseAnalysisState, useCaseAnalysisActions } from '@/hooks/useCaseAnalysis';
 import FileManagement from './case-analysis/FileManagement';
 import AnalysisResult from './case-analysis/AnalysisResult';
-import RotateCwIcon from './icons/RotateCwIcon';
 import AlertTriangleIcon from './icons/AlertTriangleIcon';
 import XIcon from './icons/XIcon';
+import Button from './ui/Button';
+import Alert from './ui/Alert';
+import FormRow from './ui/FormRow';
 
 const CaseAnalysisTool: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
     const MAX_PASTED_CHARS = 8000;
@@ -72,8 +74,11 @@ const CaseAnalysisTool: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                 <>
                     <FileManagement />
 
-                    <div>
-                        <label htmlFor="pasted-text" className="block text-sm font-medium text-gray-300 mb-1">Or paste text here:</label>
+                    <FormRow
+                        label="Or paste text here:"
+                        htmlFor="pasted-text"
+                        description={`Up to ${MAX_PASTED_CHARS.toLocaleString()} characters.`}
+                    >
                         <textarea
                             id="pasted-text"
                             value={pastedText}
@@ -84,11 +89,13 @@ const CaseAnalysisTool: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                             maxLength={MAX_PASTED_CHARS}
                             aria-describedby="pasted-text-help"
                         />
-                        <p id="pasted-text-help" className="text-xs text-gray-400 mt-1">Up to {MAX_PASTED_CHARS.toLocaleString()} characters.</p>
-                    </div>
+                    </FormRow>
                     
-                    <div>
-                        <label htmlFor="jurisdiction-case" className="block text-sm font-medium text-gray-300 mb-1">Jurisdiction (Province/State)<span aria-hidden="true" className="text-red-400 ml-1">*</span></label>
+                    <FormRow
+                        label="Jurisdiction (Province/State)"
+                        htmlFor="jurisdiction-case"
+                        required
+                    >
                         <input
                             type="text"
                             id="jurisdiction-case"
@@ -100,29 +107,36 @@ const CaseAnalysisTool: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                             disabled={isLoading}
                             required
                         />
-                    </div>
+                    </FormRow>
                     
                     {error && (
-                        <div className="bg-red-900/20 border border-red-500/50 text-red-400 text-sm rounded-lg p-3 flex items-center gap-3 animate-fade-in-up-fast" role="alert">
-                            <AlertTriangleIcon className="w-5 h-5 flex-shrink-0" />
-                            <p className="flex-grow">{error}</p>
-                            <button onClick={() => setError(null)} className="text-red-400 hover:text-white" aria-label="Dismiss error message"><XIcon className="w-5 h-5" /></button>
-                        </div>
+                        <Alert
+                            variant="error"
+                            className="animate-fade-in-up-fast"
+                            icon={<AlertTriangleIcon className="w-5 h-5 flex-shrink-0" />}
+                        >
+                            <div className="flex items-center gap-3 w-full">
+                                <p className="flex-grow">{error}</p>
+                                <button onClick={() => setError(null)} className="text-red-200 hover:text-white" aria-label="Dismiss error message"><XIcon className="w-5 h-5" /></button>
+                            </div>
+                        </Alert>
                     )}
 
                     <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4 border-t border-slate-700">
-                        <button
+                        <Button
                             onClick={reset}
                             disabled={isLoading}
-                            className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="ghost"
+                            className="flex items-center gap-2 text-sm"
                         >
-                            <RotateCwIcon className="w-4 h-4" />
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74"/><path d="M3 4v5h5"/></svg>
                             Start Over
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handleAnalysis}
                             disabled={isAnalyzeButtonDisabled}
-                            className="w-full sm:w-auto inline-flex items-center justify-center bg-amber-400 text-black font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-200 ease-out motion-safe:hover:scale-105 motion-safe:active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            fullWidth
+                            className="w-full sm:w-auto"
                         >
                             {isLoading ? (
                                 <>
@@ -130,7 +144,7 @@ const CaseAnalysisTool: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                                     Analyzing...
                                 </>
                             ) : 'Analyze Documents'}
-                        </button>
+                        </Button>
                     </div>
                 </>
             )}

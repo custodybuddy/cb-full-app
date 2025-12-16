@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ currentPath, navLinks }) => {
         : 'fixed top-0 left-0 w-full z-50 bg-transparent transition-all duration-300';
 
     const renderLink = (link: NavLink, isMobile: boolean = false) => {
-        const isActive = !link.isExternal && `/${link.href}` === currentPath;
+        const isActive = !link.isExternal && link.href === currentPath;
 
         const commonClasses = 'transition-colors duration-200 ease-out flex items-center';
         const desktopClasses = `gap-1.5 text-sm font-semibold ${isActive ? 'text-amber-400' : 'hover:text-amber-400'}`;
@@ -58,9 +58,9 @@ const Header: React.FC<HeaderProps> = ({ currentPath, navLinks }) => {
         }
 
         return (
-            <RouterLink 
-                key={link.text} 
-                to={link.href} 
+            <RouterLink
+                key={link.text}
+                to={link.href}
                 className={classes}
                 onClick={isMobile ? toggleMenu : undefined}
                 aria-current={isActive ? 'page' : undefined}

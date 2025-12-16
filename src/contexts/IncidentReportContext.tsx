@@ -2,6 +2,7 @@ import React, { createContext, useState, useCallback, ReactNode, useMemo } from 
 import { generateIncidentReport } from '../services/ai/incidentReportService';
 import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { IncidentReport, IncidentData, IncidentCategory } from '../types/ai';
+import { validateIncidentData } from '@/validation/forms';
 
 export type { IncidentReport, IncidentData, IncidentCategory };
 
@@ -43,20 +44,9 @@ export const IncidentReportProvider: React.FC<{ children: ReactNode }> = ({ chil
 
     const handleGenerateReport = useCallback(async () => {
         setError(null);
-        if (!incidentData.narrative.trim()) {
-            setError('Please provide a narrative of the incident.');
-            return;
-        }
-        if (!incidentData.jurisdiction.trim()) {
-            setError('Please specify the jurisdiction (e.g., province or state).');
-            return;
-        }
-         if (!incidentData.incidentDate) {
-            setError('Please select the date of the incident.');
-            return;
-        }
-        if (incidentData.otherPartiesInvolved.length === 0) {
-            setError('Please select or add at least one other party involved.');
+        const validation = validateIncidentData(incidentData);
+        if (!validation.isValid) {
+            setError(validation.errors);
             return;
         }
 

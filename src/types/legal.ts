@@ -1,4 +1,4 @@
-import { type JurisdictionCountry } from '../constants/jurisdictions';
+import { type JurisdictionCountry } from '../data/jurisdictions';
 
 export type BehaviorType =
     | 'isolation'

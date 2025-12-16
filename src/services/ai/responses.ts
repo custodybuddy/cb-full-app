@@ -1,4 +1,4 @@
-import { getOpenAIClient } from './client';
+import { callAIProxy } from './client';
 import { resolveModel } from './env';
 import { buildPromptInput, extractResponseText, parseJsonResponse, ResponseLike } from './parser';
 import { normalizeAIError } from './errors';
@@ -20,17 +20,15 @@ export const generateAndParseJson = async <T>({
     strictJsonOnly,
 }: GenerateOptions): Promise<T> => {
     try {
-        const model = resolveModel();
         const prompt = buildPromptInput(userPrompt);
         if (!prompt) {
             throw new AIServiceError('validation', 'Prompt is empty after cleaning.');
         }
-        const client = getOpenAIClient();
         const instructions = `${systemInstruction}\n\n${strictJsonOnly ? JSON_ONLY_STRICT : JSON_ONLY_INSTRUCTION}`;
 
         const response = await withExponentialBackoff(() =>
-            client.responses.create({
-                model,
+            callAIProxy({
+                model: resolveModel(),
                 input: prompt,
                 instructions,
             })

@@ -5,7 +5,7 @@ import AlertTriangleIcon from '../icons/AlertTriangleIcon';
 import XIcon from '../icons/XIcon';
 import RotateCwIcon from '../icons/RotateCwIcon';
 import CornerDownLeftIcon from '../icons/CornerDownLeftIcon';
-import { JURISDICTIONS, CANADIAN_JURISDICTIONS, US_JURISDICTIONS } from '@/constants/jurisdictions';
+import { JURISDICTIONS, CANADIAN_JURISDICTIONS, US_JURISDICTIONS } from '@/data/jurisdictions';
 
 const predefinedParties = [
     'Ex-spouse/Co-parent',
@@ -78,9 +78,7 @@ const ReportAnIncident: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
     ) => {
         setIncidentData(prev => {
             const currentList = prev[listName];
-            const newList = isChecked
-                ? [...currentList, item]
-                : currentList.filter(i => i !== item);
+            const newList = isChecked ? [...currentList, item] : currentList.filter(i => i !== item);
             return { ...prev, [listName]: newList };
         });
     };
@@ -124,15 +122,18 @@ const ReportAnIncident: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
 
     const isGenerateButtonDisabled = isLoading || !incidentData.narrative.trim() || !incidentData.jurisdiction.trim() || !incidentData.incidentDate || incidentData.otherPartiesInvolved.length === 0;
 
-    if (reportResponse) {
-        return <ReportResult />;
-    }
-    
-    const renderCheckbox = (label: string, listName: 'otherPartiesInvolved' | 'childrenPresent', onRemove?: () => void) => {
+    const renderCheckbox = (
+        label: string,
+        listName: 'otherPartiesInvolved' | 'childrenPresent',
+        onRemove?: () => void
+    ) => {
         const id = `${listName}-${label.replace(/\s+/g, '-')}`;
         const isChecked = incidentData[listName].includes(label);
         return (
-            <div key={id} className="flex items-center justify-between bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm transition-all duration-200 has-[:checked]:bg-amber-400/10 has-[:checked]:border-amber-400/50">
+            <div
+                key={id}
+                className="flex items-center justify-between bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm transition-all duration-200 has-[:checked]:bg-amber-400/10 has-[:checked]:border-amber-400/50"
+            >
                 <label htmlFor={id} className="flex-grow cursor-pointer text-gray-300 has-[:checked]:text-amber-300">
                     <input
                         id={id}
@@ -159,7 +160,9 @@ const ReportAnIncident: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
         );
     };
 
-
+    if (reportResponse) {
+        return <ReportResult />;
+    }
     return (
         <div className="space-y-6">
             <p className="text-gray-400 text-sm">

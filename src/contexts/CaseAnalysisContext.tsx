@@ -2,6 +2,7 @@ import React, { createContext, useState, useCallback, ReactNode, useMemo } from 
 import { analyzeCaseDocuments, prepareContentParts } from '../services/ai/caseAnalysisService';
 import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { CaseAnalysisReport } from '../types/ai';
+import { validateCaseAnalysisForm } from '@/validation/forms';
 
 // Re-export type for convenience
 export type { CaseAnalysisReport };
@@ -39,12 +40,9 @@ export const CaseAnalysisProvider: React.FC<{ children: ReactNode }> = ({ childr
     const [analysisResponse, setAnalysisResponse] = useState<CaseAnalysisReport | null>(null);
 
     const handleAnalysis = useCallback(async () => {
-        if (files.length === 0 && !pastedText.trim()) {
-            setError('Please upload at least one document or paste some text to analyze.');
-            return;
-        }
-        if (!jurisdiction.trim()) {
-            setError('Please specify the jurisdiction (e.g., province or state).');
+        const validation = validateCaseAnalysisForm(files, pastedText, jurisdiction);
+        if (!validation.isValid) {
+            setError(validation.error);
             return;
         }
 

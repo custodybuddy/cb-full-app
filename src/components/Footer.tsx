@@ -28,11 +28,11 @@ const Footer: React.FC<FooterProps> = ({ currentPath, navLinks, "aria-hidden": a
                             );
                         }
                         return (
-                            <RouterLink 
+                            <RouterLink
                                 key={link.href}
-                                to={link.href} 
-                                className={`${`/${link.href}` === currentPath ? 'text-amber-400' : 'hover:text-amber-400'} transition-colors duration-200 ease-out`}
-                                aria-current={`/${link.href}` === currentPath ? 'page' : undefined}
+                                to={link.href}
+                                className={`${link.href === currentPath ? 'text-amber-400' : 'hover:text-amber-400'} transition-colors duration-200 ease-out`}
+                                aria-current={link.href === currentPath ? 'page' : undefined}
                             >
                                 {link.text}
                             </RouterLink>
