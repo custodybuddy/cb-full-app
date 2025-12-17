@@ -2,10 +2,6 @@ import React, { lazy, Suspense } from 'react';
 import { useModal } from '../hooks/useModal';
 import Modal from './Modal';
 import SpinnerIcon from './icons/SpinnerIcon';
-import { IncidentReportProvider } from '@/features/incident-report/IncidentReportContext';
-import { EmailBuddyProvider } from '@/features/email-buddy/EmailBuddyContext';
-import { CaseAnalysisProvider } from '@/features/case-analysis/CaseAnalysisContext';
-import { FalseAllegationProvider } from '@/features/false-allegation/FalseAllegationContext';
 import { ModalType } from '../contexts/ModalContext';
 
 const CaseAnalysisTool = lazy(() => import('@/features/case-analysis/CaseAnalysisTool'));
@@ -33,44 +29,36 @@ const modalRegistry: ModalEntry[] = [
         id: 'case-analysis',
         title: 'Family Law Case Analysis Tool',
         getElement: () => (
-            <CaseAnalysisProvider>
-                <Suspense fallback={<SuspenseFallback />}>
-                    <CaseAnalysisTool isOpen />
-                </Suspense>
-            </CaseAnalysisProvider>
+            <Suspense fallback={<SuspenseFallback />}>
+                <CaseAnalysisTool isOpen />
+            </Suspense>
         )
     },
     {
         id: 'email-buddy',
         title: 'Email Law Buddy',
         getElement: () => (
-            <EmailBuddyProvider>
-                <Suspense fallback={<SuspenseFallback />}>
-                    <EmailLawBuddy isOpen />
-                </Suspense>
-            </EmailBuddyProvider>
+            <Suspense fallback={<SuspenseFallback />}>
+                <EmailLawBuddy isOpen />
+            </Suspense>
         )
     },
     {
         id: 'report-incident',
         title: 'Report An Incident',
         getElement: () => (
-            <IncidentReportProvider>
-                <Suspense fallback={<SuspenseFallback />}>
-                    <ReportAnIncident isOpen />
-                </Suspense>
-            </IncidentReportProvider>
+            <Suspense fallback={<SuspenseFallback />}>
+                <ReportAnIncident isOpen />
+            </Suspense>
         )
     },
     {
         id: 'false-allegation',
         title: 'False Allegation Response Drafting',
         getElement: () => (
-            <FalseAllegationProvider>
-                <Suspense fallback={<SuspenseFallback />}>
-                    <FalseAllegationDrafting isOpen onClose={() => undefined} />
-                </Suspense>
-            </FalseAllegationProvider>
+            <Suspense fallback={<SuspenseFallback />}>
+                <FalseAllegationDrafting isOpen onClose={() => undefined} />
+            </Suspense>
         )
     }
 ];

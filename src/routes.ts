@@ -50,7 +50,7 @@ export const routes: RouteConfig[] = [
     { path: '/terms', label: 'Terms of Use', component: TermsOfUsePage, inHeader: false, inFooter: true },
     { path: '/onboarding', label: 'Jurisdiction Onboarding', component: JurisdictionWizardPage, inHeader: false, inFooter: false },
     { path: '/support-calculator', label: 'Calculator', component: SupportCalculatorPage, inHeader: true, inFooter: true },
-];;
+];
 
 export const externalLinks: ExternalLinkConfig[] = [
     { href: 'https://blog.custodybuddy.com', text: 'Blog', inHeader: true, inFooter: true },
