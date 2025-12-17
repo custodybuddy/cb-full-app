@@ -1,7 +1,5 @@
 import React from 'react';
 import Trash2Icon from '@/components/icons/Trash2Icon';
-import { sanitizeMarkdownHtml, linkifyLegislation } from '@/utils/stringUtils';
-import { hyperlinkText } from '@/utils/linkUtils';
 
 interface ActionItem {
     item: string;
@@ -13,12 +11,11 @@ interface ActionItem {
 
 interface ActionItemsListProps {
     items: ActionItem[];
-    jurisdiction: string;
     onToggleComplete: (index: number) => void;
     onDelete: (index: number) => void;
 }
 
-const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, jurisdiction, onToggleComplete, onDelete }) => {
+const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, onToggleComplete, onDelete }) => {
     if (!items.length) return null;
 
     return (
@@ -39,11 +36,7 @@ const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, jurisdiction, 
                         />
                         <div className="flex-grow">
                             <label htmlFor={`action-item-${i}`} className="task-text cursor-pointer">
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: sanitizeMarkdownHtml(hyperlinkText(linkifyLegislation(item.item, jurisdiction))),
-                                    }}
-                                />
+                                <span className="whitespace-pre-wrap">{item.item}</span>
                                 {item.deadline && (
                                     <span className="ml-2 text-sm font-semibold text-amber-400">(Deadline: {item.deadline})</span>
                                 )}

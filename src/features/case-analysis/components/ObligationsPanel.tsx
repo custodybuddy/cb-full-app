@@ -1,6 +1,4 @@
 import React from 'react';
-import { sanitizeMarkdownHtml, linkifyLegislation } from '@/utils/stringUtils';
-import { hyperlinkText } from '@/utils/linkUtils';
 import ActionItemsList from './ActionItemsList';
 import type { CaseAnalysisReport } from '@/types/ai';
 
@@ -15,7 +13,6 @@ interface ActionItemState {
 interface ObligationsPanelProps {
     keyClauses: CaseAnalysisReport['keyClauses'];
     actionItems: ActionItemState[];
-    jurisdiction: string;
     onToggleComplete: (index: number) => void;
     onDelete: (index: number) => void;
 }
@@ -23,7 +20,6 @@ interface ObligationsPanelProps {
 const ObligationsPanel: React.FC<ObligationsPanelProps> = ({
     keyClauses = [],
     actionItems,
-    jurisdiction,
     onToggleComplete,
     onDelete,
 }) => {
@@ -38,14 +34,7 @@ const ObligationsPanel: React.FC<ObligationsPanelProps> = ({
                         {keyClauses.map((item, i) => (
                             <div key={i} className="p-3 bg-slate-800 rounded-md border border-slate-700 not-prose">
                                 <blockquote className="text-gray-300 font-semibold italic border-l-4 border-amber-400 pl-4">"{item.clause}"</blockquote>
-                                <p
-                                    className="text-gray-400 mt-2 text-sm"
-                                    dangerouslySetInnerHTML={{
-                                        __html: sanitizeMarkdownHtml(
-                                            hyperlinkText(linkifyLegislation(item.explanation, jurisdiction))
-                                        ),
-                                    }}
-                                />
+                                <p className="text-gray-400 mt-2 text-sm whitespace-pre-wrap">{item.explanation}</p>
                                 <p className="text-xs text-amber-400/80 mt-2">Source: {item.source}</p>
                             </div>
                         ))}
@@ -55,7 +44,6 @@ const ObligationsPanel: React.FC<ObligationsPanelProps> = ({
             {actionItems.length > 0 && (
                 <ActionItemsList
                     items={actionItems}
-                    jurisdiction={jurisdiction}
                     onToggleComplete={onToggleComplete}
                     onDelete={onDelete}
                 />

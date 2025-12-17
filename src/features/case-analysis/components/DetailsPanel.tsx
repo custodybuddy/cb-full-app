@@ -1,16 +1,13 @@
 import React from 'react';
 import FileTextIcon from '@/components/icons/FileTextIcon';
-import { sanitizeMarkdownHtml, linkifyLegislation } from '@/utils/stringUtils';
-import { hyperlinkText } from '@/utils/linkUtils';
 import type { CaseAnalysisReport } from '@/types/ai';
 
 interface DetailsPanelProps {
     legalJargon: CaseAnalysisReport['legalJargon'];
     documentTypes: CaseAnalysisReport['documentTypes'];
-    jurisdiction: string;
 }
 
-const DetailsPanel: React.FC<DetailsPanelProps> = ({ legalJargon = [], documentTypes = [], jurisdiction }) => {
+const DetailsPanel: React.FC<DetailsPanelProps> = ({ legalJargon = [], documentTypes = [] }) => {
     if (!legalJargon.length && !documentTypes.length) return null;
     return (
         <div className="space-y-8">
@@ -20,20 +17,12 @@ const DetailsPanel: React.FC<DetailsPanelProps> = ({ legalJargon = [], documentT
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose">
                         {legalJargon.map((item, i) => (
                             <div key={i} className="p-3 bg-slate-800 rounded-md">
-                                <p
-                                    className="font-semibold text-amber-300"
-                                    dangerouslySetInnerHTML={{
-                                        __html: sanitizeMarkdownHtml(hyperlinkText(linkifyLegislation(item.term, jurisdiction))),
-                                    }}
-                                />
-                                <p
-                                    className="text-sm text-gray-400 mt-1"
-                                    dangerouslySetInnerHTML={{
-                                        __html: sanitizeMarkdownHtml(
-                                            hyperlinkText(linkifyLegislation(item.explanation, jurisdiction))
-                                        ),
-                                    }}
-                                />
+                                <p className="font-semibold text-amber-300 whitespace-pre-wrap">
+                                    {item.term}
+                                </p>
+                                <p className="text-sm text-gray-400 mt-1 whitespace-pre-wrap">
+                                    {item.explanation}
+                                </p>
                             </div>
                         ))}
                     </div>

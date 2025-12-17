@@ -129,10 +129,10 @@ ${report.legalInsights}
                         <IncidentMarkdown content={report.professionalSummary} className="max-w-3xl" />
                     </IncidentSection>
                     <IncidentSection title="Observed Impact on Children" icon={<AlertTriangleIcon className="text-yellow-400 w-5 h-5" />}>
-                        <IncidentMarkdown content={report.observedImpact} jurisdiction={incidentData.jurisdiction} linkify className="max-w-3xl" />
+                        <IncidentMarkdown content={report.observedImpact} className="max-w-3xl" />
                     </IncidentSection>
                     <IncidentSection title={`Legal Insights (${incidentData.jurisdiction})`} icon={<GavelIcon className="text-amber-400 w-5 h-5" />}>
-                        <IncidentMarkdown content={report.legalInsights} jurisdiction={incidentData.jurisdiction} linkify className="max-w-3xl" />
+                        <IncidentMarkdown content={report.legalInsights} className="max-w-3xl" />
                     </IncidentSection>
                     <ReportReferences legalInsights={report.legalInsights} sources={report.sources || []} />
                 </section>

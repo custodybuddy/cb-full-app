@@ -1,15 +1,12 @@
 import React from 'react';
 import AlertTriangleIcon from '@/components/icons/AlertTriangleIcon';
-import { sanitizeMarkdownHtml, linkifyLegislation } from '@/utils/stringUtils';
-import { hyperlinkText } from '@/utils/linkUtils';
 import type { CaseAnalysisReport } from '@/types/ai';
 
 interface FlagsPanelProps {
     discrepancies: CaseAnalysisReport['discrepancies'];
-    jurisdiction: string;
 }
 
-const FlagsPanel: React.FC<FlagsPanelProps> = ({ discrepancies = [], jurisdiction }) => {
+const FlagsPanel: React.FC<FlagsPanelProps> = ({ discrepancies = [] }) => {
     if (!discrepancies.length) return null;
     return (
         <section className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg not-prose">
@@ -20,12 +17,7 @@ const FlagsPanel: React.FC<FlagsPanelProps> = ({ discrepancies = [], jurisdictio
             <div className="space-y-4">
                 {discrepancies.map((item, i) => (
                     <div key={i} className="text-sm">
-                        <p
-                            className="text-red-300"
-                            dangerouslySetInnerHTML={{
-                                __html: sanitizeMarkdownHtml(hyperlinkText(linkifyLegislation(item.description, jurisdiction))),
-                            }}
-                        />
+                        <p className="text-red-300 whitespace-pre-wrap">{item.description}</p>
                         <p className="text-xs text-red-400/80 mt-1">Sources: {item.sources.join(', ')}</p>
                     </div>
                 ))}

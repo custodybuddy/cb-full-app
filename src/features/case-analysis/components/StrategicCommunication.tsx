@@ -3,13 +3,9 @@ import LightbulbIcon from '@/components/icons/LightbulbIcon';
 import ClipboardIcon from '@/components/icons/ClipboardIcon';
 import ClipboardCheckIcon from '@/components/icons/ClipboardCheckIcon';
 import PencilIcon from '@/components/icons/PencilIcon';
-import { sanitizeMarkdownHtml, linkifyLegislation } from '@/utils/stringUtils';
-import { formatMarkdown } from '@/utils/markdownParser';
-import { hyperlinkText } from '@/utils/linkUtils';
 
 interface StrategicCommunicationProps {
     recommendation: string;
-    jurisdiction: string;
     draftEmail: string;
     isEditing: boolean;
     isCopied: boolean;
@@ -20,7 +16,6 @@ interface StrategicCommunicationProps {
 
 const StrategicCommunication: React.FC<StrategicCommunicationProps> = ({
     recommendation,
-    jurisdiction,
     draftEmail,
     isEditing,
     isCopied,
@@ -33,12 +28,9 @@ const StrategicCommunication: React.FC<StrategicCommunicationProps> = ({
             <LightbulbIcon className="w-5 h-5 text-amber-400" />
             Strategic Communication Prompt
         </h4>
-        <p
-            className="text-sm text-gray-300 mb-4"
-            dangerouslySetInnerHTML={{
-                __html: sanitizeMarkdownHtml(hyperlinkText(linkifyLegislation(recommendation, jurisdiction))),
-            }}
-        />
+        <p className="text-sm text-gray-300 mb-4 whitespace-pre-wrap">
+            {recommendation}
+        </p>
         <div className="p-3 bg-slate-900 rounded-md border border-slate-700 relative">
             <div className="absolute top-2 right-2 flex items-center gap-1 z-10 no-pdf">
                 <button
@@ -65,10 +57,9 @@ const StrategicCommunication: React.FC<StrategicCommunicationProps> = ({
                     aria-label="Edit strategic email draft"
                 />
             ) : (
-                <div
-                    className="text-gray-300 leading-relaxed break-words prose prose-invert max-w-none text-sm pt-8"
-                    dangerouslySetInnerHTML={{ __html: sanitizeMarkdownHtml(formatMarkdown(draftEmail)) }}
-                />
+                <div className="text-gray-300 leading-relaxed break-words text-sm pt-8 whitespace-pre-wrap">
+                    {draftEmail}
+                </div>
             )}
         </div>
     </div>

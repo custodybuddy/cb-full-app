@@ -195,7 +195,6 @@ const AnalysisResult: React.FC = () => {
                             summary={response.summary}
                             suggestedNextSteps={response.suggestedNextSteps}
                             strategicCommunication={response.strategicCommunication}
-                            jurisdiction={jurisdiction}
                             strategicDraftEmail={editedStrategicEmail}
                             isStrategicEmailEditing={isStrategicEmailEditing}
                             isCopied={isCopied}
@@ -210,7 +209,6 @@ const AnalysisResult: React.FC = () => {
                         <ObligationsPanel
                             keyClauses={response.keyClauses}
                             actionItems={actionItems}
-                            jurisdiction={jurisdiction}
                             onToggleComplete={handleToggleComplete}
                             onDelete={handleDeleteItem}
                         />
@@ -218,7 +216,7 @@ const AnalysisResult: React.FC = () => {
                 )}
                 {(activeTab === 'flags' || renderAllForPdf) && tabConfig[2].hasContent && (
                     <section id="panel-flags" role="tabpanel" aria-labelledby="tab-flags" className={`${renderAllForPdf ? 'mb-8' : ''}`}>
-                        <FlagsPanel discrepancies={response.discrepancies} jurisdiction={jurisdiction} />
+                        <FlagsPanel discrepancies={response.discrepancies} />
                     </section>
                 )}
                 {(activeTab === 'details' || renderAllForPdf) && tabConfig[3].hasContent && (
@@ -226,7 +224,6 @@ const AnalysisResult: React.FC = () => {
                         <DetailsPanel
                             legalJargon={response.legalJargon}
                             documentTypes={response.documentTypes}
-                            jurisdiction={jurisdiction}
                         />
                     </section>
                 )}

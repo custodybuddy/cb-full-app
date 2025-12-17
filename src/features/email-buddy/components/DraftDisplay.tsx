@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { formatMarkdown } from '@/utils/markdownParser';
-import { sanitizeHtml } from '@/utils/stringUtils';
 import { useTextToSpeech } from '@/hooks/useTextToSpeech';
 import { cleanEmailForSpeech } from '@/utils/stringUtils';
 import Feedback from '@/features/marketing/components/Feedback';
@@ -84,10 +82,9 @@ const DraftDisplay: React.FC<DraftDisplayProps> = ({ title, draft }) => {
                         aria-label="Edit draft email"
                     />
                 ) : (
-                    <div
-                        className="text-gray-300 leading-relaxed prose prose-invert prose-p:my-2 prose-strong:text-amber-400 max-w-none text-sm"
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(formatMarkdown(editedDraft)) }}
-                    />
+                    <div className="text-gray-300 leading-relaxed text-sm whitespace-pre-wrap">
+                        {editedDraft}
+                    </div>
                 )}
             </div>
 
