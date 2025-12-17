@@ -1,6 +1,6 @@
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
 
-export type ModalType = 'case-analysis' | 'email-buddy' | 'report-incident' | 'false-allegation';
+export type ModalType = 'case-analysis' | 'email-buddy' | 'false-allegation';
 
 interface ModalContextType {
     activeModal: ModalType | null;

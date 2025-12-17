@@ -2,10 +2,23 @@
 import React from 'react';
 import CheckCheckIcon from '@/components/icons/CheckCheckIcon';
 import ShieldCheckIcon from '@/components/icons/ShieldCheckIcon';
+import HeroBackground from './HeroBackground';
 
 const Hero: React.FC = () => {
     return (
         <section className="flex items-center justify-center pt-32 pb-12 md:pt-40 md:pb-16 text-center relative overflow-hidden">
+            <HeroBackground />
+            <div
+                className="absolute inset-0 opacity-20 mix-blend-soft-light"
+                style={{
+                    backgroundImage:
+                        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><g fill='none' stroke='%23fbbf24' stroke-width='5' opacity='0.28'><path d='M180 520l160-160 40 40-160 160z'/><path d='M310 350l70-70 40 40-70 70z'/><rect x='120' y='540' width='260' height='24' rx='12'/></g><g fill='none' stroke='%23fbbf24' stroke-width='5' opacity='0.2'><circle cx='760' cy='300' r='50'/><circle cx='900' cy='320' r='40'/><path d='M700 520c40-80 200-80 240 0' /><path d='M820 520c20-60 120-60 140 0' /></g></svg>\")",
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    backgroundSize: '80%',
+                }}
+                aria-hidden="true"
+            />
             <div className="container mx-auto px-4 z-10">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 animate-fade-in-down">
                     <span className="text-amber-400">Your Ally</span> in Co-Parenting <br className="hidden sm:inline" />

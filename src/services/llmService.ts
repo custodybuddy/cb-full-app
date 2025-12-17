@@ -1,20 +1,14 @@
 import OpenAI from 'openai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 
 const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY;
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
 const deepseekClient = DEEPSEEK_API_KEY
     ? new OpenAI({
           apiKey: DEEPSEEK_API_KEY,
-          baseURL: 'https://api.deepseek.com',
+          baseURL: typeof window === 'undefined' ? 'http://localhost:3000/api/deepseek' : `${window.location.origin}/api/deepseek`,
           dangerouslyAllowBrowser: true,
       })
     : null;
-
-const geminiClient = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
-
 export const CustodyAIResponse = z.object({
     summary: z.string().max(500),
     severity: z.string().optional(),
@@ -111,29 +105,14 @@ async function callDeepseek<T>(
     return null;
 }
 
-async function callGemini<T>(
-    schema: z.ZodSchema<T>,
-    systemPrompt: string,
-    userPrompt: string
-): Promise<T | null> {
-    if (!geminiClient) return null;
-
-    try {
-        const model = geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const result = await model.generateContent([systemPrompt, userPrompt]);
-        const parsed = schema.safeParse(parseJson(result.response.text()));
-        if (parsed.success) return parsed.data;
-    } catch (error) {
-        console.warn('Gemini failed:', error);
-    }
-
-    return null;
-}
-
 export async function analyzeIncident(
     narrative: string,
     jurisdiction: string
 ): Promise<CustodyAIResponse> {
+    if (!deepseekClient) {
+        throw new Error('No DeepSeek client configured. Set VITE_DEEPSEEK_API_KEY.');
+    }
+
     const prompt = `Analyze co-parenting incident in ${jurisdiction}:\n\n${narrative}`;
     const system = `You are CustodyBuddy AI. Respond ONLY in valid JSON matching this exact schema. NO markdown, NO extra text, NO tools:
 
@@ -151,19 +130,15 @@ export async function analyzeIncident(
         { temperature: 0.1, maxTokens: 800 }
     );
     if (deepseekResult) return deepseekResult;
-
-    const geminiResult = await callGemini(CustodyAIResponse, system, prompt);
-    if (geminiResult) return geminiResult;
-
-    throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
+    throw new Error('DeepSeek analysis failed.');
 }
 
 export async function analyzeEmailBuddy(input: {
     rawEmail: string;
     jurisdiction: string;
 }): Promise<EmailBuddyResponse> {
-    if (!deepseekClient && !geminiClient) {
-        throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
+    if (!deepseekClient) {
+        throw new Error('No DeepSeek client configured. Set VITE_DEEPSEEK_API_KEY.');
     }
 
     const system = `You are CustodyBuddy Email Law Buddy, helping self-represented parents in high-conflict co-parenting.
@@ -204,11 +179,7 @@ ${input.rawEmail}`.trim();
         { temperature: 0.2, maxTokens: 1200 }
     );
     if (deepseekResult) return deepseekResult;
-
-    const geminiResult = await callGemini(EmailBuddyResponseSchema, system, prompt);
-    if (geminiResult) return geminiResult;
-
-    throw new Error('Email Buddy analysis failed with all providers.');
+    throw new Error('Email Buddy analysis failed.');
 }
 
 export async function analyzeCaseDocuments(input: {
@@ -216,8 +187,8 @@ export async function analyzeCaseDocuments(input: {
     mainText: string;
     secondaryText?: string;
 }): Promise<CaseAnalysisResponse> {
-    if (!deepseekClient && !geminiClient) {
-        throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
+    if (!deepseekClient) {
+        throw new Error('No DeepSeek client configured. Set VITE_DEEPSEEK_API_KEY.');
     }
 
     const system = `You are CustodyBuddy Case Analysis, helping self-represented parents interpret existing court orders, agreements, and parenting plans.
@@ -254,11 +225,7 @@ ${input.secondaryText}` : ''}`.trim();
         { temperature: 0.15, maxTokens: 1600 }
     );
     if (deepseekResult) return deepseekResult;
-
-    const geminiResult = await callGemini(CaseAnalysisResponseSchema, system, prompt);
-    if (geminiResult) return geminiResult;
-
-    throw new Error('Case analysis failed with all providers.');
+    throw new Error('Case analysis failed.');
 }
 
 export async function explainSupportResult(input: {
@@ -266,8 +233,8 @@ export async function explainSupportResult(input: {
     calculatedAmount: number;
     inputsSummary: string;
 }): Promise<SupportExplanationResponse> {
-    if (!deepseekClient && !geminiClient) {
-        throw new Error('No AI clients configured. Set VITE_DEEPSEEK_API_KEY or VITE_GEMINI_API_KEY.');
+    if (!deepseekClient) {
+        throw new Error('No DeepSeek client configured. Set VITE_DEEPSEEK_API_KEY.');
     }
 
     const systemPrompt = `You are CustodyBuddy Support Explainer. The child/spousal support AMOUNT has already been calculated by a separate guideline calculator.
@@ -307,9 +274,5 @@ ${input.inputsSummary}`.trim();
         { temperature: 0.15, maxTokens: 900 }
     );
     if (deepseekResult) return deepseekResult;
-
-    const geminiResult = await callGemini(SupportExplanationResponse, systemPrompt, userContent);
-    if (geminiResult) return geminiResult;
-
-    throw new Error('Support explanation failed with all providers.');
+    throw new Error('Support explanation failed.');
 }

@@ -6,7 +6,6 @@ import { ModalType } from '../contexts/ModalContext';
 
 const CaseAnalysisTool = lazy(() => import('@/features/case-analysis/CaseAnalysisTool'));
 const EmailLawBuddy = lazy(() => import('@/features/email-buddy/EmailLawBuddy'));
-const ReportAnIncident = lazy(() => import('@/features/incident-report/components/ReportAnIncident'));
 const FalseAllegationDrafting = lazy(() => import('@/features/false-allegation/FalseAllegationDrafting'));
 
 const SuspenseFallback: React.FC = () => (
@@ -40,15 +39,6 @@ const modalRegistry: ModalEntry[] = [
         getElement: () => (
             <Suspense fallback={<SuspenseFallback />}>
                 <EmailLawBuddy isOpen />
-            </Suspense>
-        )
-    },
-    {
-        id: 'report-incident',
-        title: 'Report An Incident',
-        getElement: () => (
-            <Suspense fallback={<SuspenseFallback />}>
-                <ReportAnIncident isOpen />
             </Suspense>
         )
     },

@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { useIncidentAnalysis } from './useIncidentAnalysis';
+import { ReportResult } from './ReportResult';
 import type { ReactNode } from 'react';
 
 const JURISDICTIONS = [
@@ -161,84 +162,7 @@ const IncidentReportPage = () => {
                         )}
 
                         {result ? (
-                            <section className="space-y-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-black/20">
-                                <header className="space-y-2">
-                                    <h2 className="text-xl font-semibold text-white">
-                                        Incident Analysis
-                                    </h2>
-                                    {result.severity && (
-                                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">
-                                            Severity: {result.severity}
-                                        </p>
-                                    )}
-                                </header>
-
-                                <p className="text-sm leading-relaxed text-slate-200">
-                                    {result.summary}
-                                </p>
-
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                            Action Items
-                                        </h3>
-                                        <ul className="space-y-2 text-sm text-slate-200">
-                                            {result.actionItems.map((item, idx) => (
-                                                <li key={idx} className="flex gap-2">
-                                                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-400" />
-                                                    <span>{item}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                            Legal Notes
-                                        </h3>
-                                        <ul className="space-y-2 text-sm text-slate-200">
-                                            {result.legalNotes.map((note, idx) => (
-                                                <li key={idx}>• {note}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                {result.citations && result.citations.length > 0 && (
-                                    <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
-                                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                                            Sources & References
-                                        </h3>
-                                        <ul className="space-y-3 text-xs text-slate-200">
-                                            {result.citations.map((c, idx) => (
-                                                <li key={idx} className="border-l-2 border-amber-400 pl-3">
-                                                    <div className="font-semibold text-white">
-                                                        {c.claim}
-                                                    </div>
-                                                    <a
-                                                        href={c.source.url}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="text-amber-300 underline"
-                                                    >
-                                                        {c.source.title}
-                                                    </a>
-                                                    <div className="mt-1 text-[11px] text-slate-400">
-                                                        {c.source.snippet}
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-
-                                <button
-                                    type="button"
-                                    onClick={reset}
-                                    className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 transition hover:text-slate-200"
-                                >
-                                    Start a new incident
-                                </button>
-                            </section>
+                            <ReportResult result={result} onReset={reset} />
                         ) : (
                             <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-sm text-slate-300 shadow-xl shadow-black/20">
                                 <h2 className="text-lg font-semibold text-white">

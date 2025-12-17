@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { useEmailBuddy } from './useEmailBuddy';
+import { EmailBuddyResult } from './EmailBuddyResult';
 
 export function EmailBuddyPage() {
     const [rawEmail, setRawEmail] = useState('');
@@ -56,76 +57,9 @@ export function EmailBuddyPage() {
                 </div>
             )}
 
-            {result && (
-                <section className="space-y-6 rounded-xl border border-slate-200 bg-slate-50 p-6">
-                    <div>
-                        <h2 className="text-base font-semibold text-slate-900">Tone & Demands</h2>
-                        <p className="mt-1 text-sm text-slate-800">
-                            <span className="font-medium">Detected tone:</span> {result.originalTone}
-                        </p>
-
-                        {result.keyDemands.length > 0 && (
-                            <div className="mt-3">
-                                <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                                    Key Demands
-                                </h3>
-                                <ul className="mt-1 space-y-1 text-sm text-slate-800">
-                                    {result.keyDemands.map((d, i) => (
-                                        <li key={i}>• {d}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-
-                        {result.riskFlags.length > 0 && (
-                            <div className="mt-3">
-                                <h3 className="text-xs font-semibold uppercase tracking-wide text-red-500">
-                                    Risk Flags
-                                </h3>
-                                <ul className="mt-1 space-y-1 text-sm text-red-700">
-                                    {result.riskFlags.map((f, i) => (
-                                        <li key={i}>• {f}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div>
-                            <h3 className="mb-2 text-sm font-semibold text-slate-900">BIFF Draft</h3>
-                            <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 whitespace-pre-wrap">
-                                {result.biffReply}
-                            </div>
-                        </div>
-                        <div>
-                            <h3 className="mb-2 text-sm font-semibold text-slate-900">Grey Rock Draft</h3>
-                            <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 whitespace-pre-wrap">
-                                {result.greyRockReply}
-                            </div>
-                        </div>
-                    </div>
-
-                    {result.notesForCourt.length > 0 && (
-                        <div>
-                            <h3 className="mb-2 text-sm font-semibold text-slate-900">Notes for Court</h3>
-                            <ul className="space-y-1 text-xs text-slate-700">
-                                {result.notesForCourt.map((n, i) => (
-                                    <li key={i}>• {n}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    <button
-                        type="button"
-                        onClick={reset}
-                        className="text-xs font-medium text-slate-500 hover:text-slate-700"
-                    >
-                        Analyze another email
-                    </button>
-                </section>
-            )}
+      {result && (
+        <EmailBuddyResult result={result} onReset={reset} />
+      )}
         </div>
     );
 }

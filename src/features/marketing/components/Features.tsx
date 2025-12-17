@@ -88,7 +88,7 @@ const Features: React.FC = () => {
                     {features.map((feature, index) => (
                         <Card
                             key={index}
-                            className={`h-full p-8 flex flex-col items-center animate-fade-in-up delay-${index * 100} transition-all duration-300 ease-out hover:bg-slate-700/80 motion-safe:hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-400/10 border border-amber-400/50 hover:border-amber-400`}
+                            className={`h-full p-8 flex flex-col items-center animate-fade-in-up delay-${index * 100} transition-all duration-300 ease-out hover:bg-slate-700/80 motion-safe:hover:-translate-y-2 motion-safe:hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-400/15 border border-amber-400/50 hover:border-amber-400 hover:ring-2 hover:ring-amber-400/25`}
                         >
                             <div className="p-4 rounded-full bg-amber-400 text-slate-900 mb-4 relative">
                                 {feature.badge && (
