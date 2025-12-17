@@ -1,13 +1,21 @@
 import type { IncidentData, IncidentReport } from '@/types/ai';
+import { generateAndParseJson } from './responses';
+import { incidentReportSystemPrompt } from '@/prompts';
 
-export const generateIncidentReport = async (_incidentData: IncidentData): Promise<IncidentReport> => ({
-    // TODO(custodybuddy): Replace with real incident report drafting logic.
-    title: 'Incident Report (Placeholder)',
-    category: 'Other',
-    severity: 'Low',
-    severityJustification: 'Placeholder severity explanation.',
-    professionalSummary: 'Placeholder summary. Wire up drafting when ready.',
-    observedImpact: 'Placeholder impact. Add analysis output here.',
-    legalInsights: 'Placeholder legal insights. Add jurisdiction-specific logic here.',
-    sources: [],
-});
+export const generateIncidentReport = async (incidentData: IncidentData): Promise<IncidentReport> => {
+    const userPrompt = [
+        `Jurisdiction: ${incidentData.jurisdiction}`,
+        `Incident date: ${incidentData.incidentDate}`,
+        `Location: ${incidentData.location || 'Not provided'}`,
+        `Other parties involved: ${incidentData.otherPartiesInvolved.join(', ') || 'None provided'}`,
+        `Children present: ${incidentData.childrenPresent.join(', ') || 'None provided'}`,
+        '',
+        'Narrative:',
+        incidentData.narrative,
+    ].join('\n');
+
+    return generateAndParseJson<IncidentReport>({
+        systemInstruction: incidentReportSystemPrompt,
+        userPrompt,
+    });
+};
