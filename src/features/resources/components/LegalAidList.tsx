@@ -1,6 +1,19 @@
 import React from 'react';
-import { legalAidServices } from '@/constants';
 import ExternalLinkIcon from '@/components/icons/ExternalLinkIcon';
+
+interface LegalAidService {
+    province: string;
+    url: string;
+}
+
+const legalAidServices: LegalAidService[] = [
+    { province: 'Ontario', url: 'https://www.legalaid.on.ca/' },
+    { province: 'British Columbia', url: 'https://legalaid.bc.ca/' },
+    { province: 'Alberta', url: 'https://www.legalaid.ab.ca/' },
+    { province: 'Quebec', url: 'https://www.csj.qc.ca/' },
+    { province: 'Nova Scotia', url: 'https://www.nslegalaid.ca/' },
+    { province: 'Manitoba', url: 'https://www.legalaid.mb.ca/' },
+];
 
 const LegalAidList: React.FC = () => {
     return (

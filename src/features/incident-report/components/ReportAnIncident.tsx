@@ -1,6 +1,17 @@
 import React from 'react';
 import ReportResult from './ReportResult';
-import { JURISDICTIONS, CANADIAN_JURISDICTIONS, US_JURISDICTIONS } from '@/data/jurisdictions';
+
+const JURISDICTIONS = [
+    { id: 'ontario', region: 'Ontario', country: 'CA' },
+    { id: 'british-columbia', region: 'British Columbia', country: 'CA' },
+    { id: 'alberta', region: 'Alberta', country: 'CA' },
+    { id: 'california', region: 'California', country: 'US' },
+    { id: 'texas', region: 'Texas', country: 'US' },
+    { id: 'new-york', region: 'New York', country: 'US' },
+];
+
+const CANADIAN_JURISDICTIONS = JURISDICTIONS.filter(j => j.country === 'CA').map(j => j.id);
+const US_JURISDICTIONS = JURISDICTIONS.filter(j => j.country === 'US').map(j => j.id);
 
 const predefinedParties = [
     'Ex-spouse/Co-parent',

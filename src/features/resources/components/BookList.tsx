@@ -1,6 +1,44 @@
 import React, { useState } from 'react';
-import { books } from '@/constants';
 import ExternalLinkIcon from '@/components/icons/ExternalLinkIcon';
+
+interface Book {
+    imageUrl: string;
+    alt: string;
+    title: string;
+    amazonLink: string;
+    ariaLabel: string;
+}
+
+const books: Book[] = [
+    {
+        imageUrl: 'https://m.media-amazon.com/images/I/81WNrK+icJL._SX342_.jpg',
+        alt: 'Book cover for Co-parenting with a Toxic Ex',
+        title: 'Co-parenting with a Toxic Ex by Amy J.L. Baker and Paul R. Fine',
+        amazonLink: 'https://www.amazon.ca/dp/B0719CH1D3?tag=custodybudd0c-20&language=en_CA',
+        ariaLabel: 'View Co-parenting with a Toxic Ex on Amazon (paid link)',
+    },
+    {
+        imageUrl: 'https://m.media-amazon.com/images/I/71C30NlvpeL._SY466_.jpg',
+        alt: 'Book cover for BIFF: Quick Responses to High-Conflict People',
+        title: 'BIFF: Quick Responses to High-Conflict People by Bill Eddy',
+        amazonLink: 'https://www.amazon.ca/dp/1936268728?tag=custodybudd0c-20&language=en_CA',
+        ariaLabel: 'View BIFF: Quick Responses to High-Conflict People on Amazon (paid link)',
+    },
+    {
+        imageUrl: 'https://m.media-amazon.com/images/I/5165NcbMc4L._SY445_SX342_QL70_ML2_.jpg',
+        alt: 'Book cover for Divorce Poison',
+        title: 'Divorce Poison by Dr. Richard A. Warshak',
+        amazonLink: 'https://www.amazon.ca/dp/B06ZYG3KFX?tag=custodybudd0c-20&language=en_CA',
+        ariaLabel: 'View Divorce Poison on Amazon (paid link)',
+    },
+    {
+        imageUrl: 'https://prodimage.images-bn.com/pimages/9781499677522_p0_v1_s1200x630.jpg',
+        alt: 'Book cover for Mindful Co-Parenting',
+        title: 'Mindful Co-Parenting by Jeremy S. Gaies and James B. Morris Jr.',
+        amazonLink: 'https://www.amazon.ca/dp/B0711GNLJF?tag=custodybudd0c-20&language=en_CA',
+        ariaLabel: 'View Mindful Co-Parenting on Amazon (paid link)',
+    },
+];
 
 const BookList: React.FC = () => {
     const [showAllBooks, setShowAllBooks] = useState(false);

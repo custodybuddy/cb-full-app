@@ -1,4 +1,4 @@
-import { type JurisdictionCountry } from '../data/jurisdictions';
+export type JurisdictionCountry = 'CA' | 'US';
 
 export type BehaviorType =
     | 'isolation'
