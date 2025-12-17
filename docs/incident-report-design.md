@@ -3,14 +3,14 @@
 This design system governs every incident report surface (modal, inline views, exports/PDF). It focuses on legal-grade readability, scannability, and accessibility.
 
 ## Core Goals
-- **Professional tone:** Read like a legal memo, not chat.
+- **Professional tone:** Read clean like a legal memo, not chat.
 - **Scannability:** Clear hierarchy, generous spacing, concise headings.
 - **Accessibility:** WCAG AA+ contrast, legible type, adequate line height.
 - **Responsive:** Mobile-first; desktop enhances spacing and layout.
 
 ## Typographic Hierarchy
-- Heading font: same as app heading (Inter/system sans, semi-bold).
-- Body font: same as global body (Inter/system sans, regular).
+- Heading font: same as app heading (Prata, semi-bold).
+- Body font: same as global body (Raleway, regular).
 - Modal title (H1): 20–22px, bold.
 - Section headings (H2): 16–18px, bold, consistent sizing.
 - Subheadings/labels (H3 or inline labels): 14–15px, medium weight, uppercase or smallcaps.
@@ -32,9 +32,8 @@ This design system governs every incident report surface (modal, inline views, e
 ## Section Order (always)
 1) Professional Summary  
 2) Observed Impact  
-3) Legal Insights  
-4) Legal References & Sources (statutes, case law, and additional links)  
-5) Disclaimer
+3) Legal References & Sources (statutes, case law, and additional links)  
+4) Disclaimer Box
 
 ## Spacing & Rhythm
 - Section blocks separated by generous vertical space and subtle dividers.

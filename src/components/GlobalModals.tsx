@@ -2,16 +2,16 @@ import React, { lazy, Suspense } from 'react';
 import { useModal } from '../hooks/useModal';
 import Modal from './Modal';
 import SpinnerIcon from './icons/SpinnerIcon';
-import { IncidentReportProvider } from '../contexts/IncidentReportContext';
-import { EmailBuddyProvider } from '../contexts/EmailBuddyContext';
-import { CaseAnalysisProvider } from '../contexts/CaseAnalysisContext';
-import { FalseAllegationProvider } from '../contexts/FalseAllegationContext';
+import { IncidentReportProvider } from '@/features/incident-report/IncidentReportContext';
+import { EmailBuddyProvider } from '@/features/email-buddy/EmailBuddyContext';
+import { CaseAnalysisProvider } from '@/features/case-analysis/CaseAnalysisContext';
+import { FalseAllegationProvider } from '@/features/false-allegation/FalseAllegationContext';
 import { ModalType } from '../contexts/ModalContext';
 
-const CaseAnalysisTool = lazy(() => import('./CaseAnalysisTool'));
-const EmailLawBuddy = lazy(() => import('./EmailLawBuddy'));
-const ReportAnIncident = lazy(() => import('./report-incident/ReportAnIncident'));
-const FalseAllegationDrafting = lazy(() => import('./false-allegation/FalseAllegationDrafting'));
+const CaseAnalysisTool = lazy(() => import('@/features/case-analysis/CaseAnalysisTool'));
+const EmailLawBuddy = lazy(() => import('@/features/email-buddy/EmailLawBuddy'));
+const ReportAnIncident = lazy(() => import('@/features/incident-report/components/ReportAnIncident'));
+const FalseAllegationDrafting = lazy(() => import('@/features/false-allegation/FalseAllegationDrafting'));
 
 const SuspenseFallback: React.FC = () => (
     <div className="flex justify-center items-center h-full min-h-[400px]">

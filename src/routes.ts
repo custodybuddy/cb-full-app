@@ -1,19 +1,19 @@
 import React, { lazy } from 'react';
 
 // Lazy load page components for better performance
-const HomePage = lazy(() => import('./pages/HomePage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const FeaturesPage = lazy(() => import('./pages/FeaturesPage'));
-const HowItWorksPage = lazy(() => import('./pages/HowItWorksPage'));
-const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage'));
-const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
-const DonatePage = lazy(() => import('./pages/DonatePage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const TemplateLibraryPage = lazy(() => import('./pages/TemplateLibraryPage'));
-const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
-const TermsOfUsePage = lazy(() => import('./pages/TermsOfUsePage'));
-const JurisdictionWizardPage = lazy(() => import('./pages/JurisdictionWizardPage'));
-const SupportCalculatorPage = lazy(() => import('./pages/SupportCalculatorPage'));
+const HomePage = lazy(() => import('./features/marketing/pages/HomePage'));
+const AboutPage = lazy(() => import('./features/marketing/pages/AboutPage'));
+const FeaturesPage = lazy(() => import('./features/marketing/pages/FeaturesPage'));
+const HowItWorksPage = lazy(() => import('./features/marketing/pages/HowItWorksPage'));
+const TestimonialsPage = lazy(() => import('./features/marketing/pages/TestimonialsPage'));
+const ResourcesPage = lazy(() => import('./features/resources/pages/ResourcesPage'));
+const DonatePage = lazy(() => import('./features/marketing/pages/DonatePage'));
+const ContactPage = lazy(() => import('./features/contact/pages/ContactPage'));
+const TemplateLibraryPage = lazy(() => import('./features/template-library/pages/TemplateLibraryPage'));
+const PrivacyPolicyPage = lazy(() => import('./features/legal/pages/PrivacyPolicyPage'));
+const TermsOfUsePage = lazy(() => import('./features/legal/pages/TermsOfUsePage'));
+const JurisdictionWizardPage = lazy(() => import('./features/onboarding/pages/JurisdictionWizardPage'));
+const SupportCalculatorPage = lazy(() => import('./features/support-calculator/pages/SupportCalculatorPage'));
 
 export interface RouteConfig {
     path: string;
