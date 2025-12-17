@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReportResult from './ReportResult';
+import { useIncidentAnalysis } from '../useIncidentAnalysis';
 
 const JURISDICTIONS = [
     { id: 'ontario', region: 'Ontario', country: 'CA' },
@@ -25,22 +26,54 @@ const predefinedParties = [
 const predefinedChildren = ['Child A', 'Child B', 'Child C'];
 
 const ReportAnIncident: React.FC<{ isOpen?: boolean }> = () => {
+    const [narrative, setNarrative] = useState(
+        'On July 14, pickup was 45 minutes late without notice. The child waited with a grandparent and missed a scheduled activity.'
+    );
+    const [jurisdiction, setJurisdiction] = useState('ontario');
+    const [incidentDate, setIncidentDate] = useState('2023-07-14');
+    const [location, setLocation] = useState('Community Center Parking Lot');
+    const { runAnalysis, result, loading, error, reset } = useIncidentAnalysis();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const region =
+            JURISDICTIONS.find(j => j.id === jurisdiction)?.region || jurisdiction;
+        const selectedParties = predefinedParties.filter(
+            party => party === 'Ex-spouse/Co-parent' || party === 'Witness'
+        );
+        await runAnalysis({
+            date: incidentDate,
+            location,
+            parties: selectedParties.join(', '),
+            narrative,
+            jurisdiction: region,
+        });
+    };
+
+    const handleReset = () => {
+        setNarrative('');
+        setJurisdiction('');
+        setIncidentDate('');
+        setLocation('');
+        reset();
+    };
+
     return (
         <div className="space-y-6">
             <p className="text-gray-400 text-sm">
                 Document what happened in your own words. Our AI will analyze your narrative and transform it into a professional, objective, and court-ready report.
             </p>
 
-            <form noValidate className="space-y-4">
+            <form noValidate className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="narrative" className="block text-sm font-medium text-gray-300 mb-1">Incident Narrative<span aria-hidden="true" className="text-red-400 ml-1">*</span></label>
                     <textarea
                         id="narrative"
                         name="narrative"
-                        defaultValue="On July 14, pickup was 45 minutes late without notice. The child waited with a grandparent and missed a scheduled activity."
+                        value={narrative}
+                        onChange={event => setNarrative(event.target.value)}
                         rows={6}
                         className="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-400 focus:outline-none transition-shadow duration-200"
-                        readOnly
                         required
                     />
                 </div>
@@ -52,7 +85,8 @@ const ReportAnIncident: React.FC<{ isOpen?: boolean }> = () => {
                             id="jurisdiction-incident"
                             name="jurisdiction"
                             className="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-400 focus:outline-none text-gray-100"
-                            disabled
+                            value={jurisdiction}
+                            onChange={event => setJurisdiction(event.target.value)}
                             required
                         >
                             <option value="">Select a jurisdiction</option>
@@ -79,9 +113,9 @@ const ReportAnIncident: React.FC<{ isOpen?: boolean }> = () => {
                             type="date"
                             id="incidentDate"
                             name="incidentDate"
-                            defaultValue="2023-07-14"
+                            value={incidentDate}
+                            onChange={event => setIncidentDate(event.target.value)}
                             className="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                            disabled
                             required
                         />
                     </div>
@@ -93,9 +127,9 @@ const ReportAnIncident: React.FC<{ isOpen?: boolean }> = () => {
                         type="text"
                         id="location"
                         name="location"
-                        defaultValue="Community Center Parking Lot"
+                        value={location}
+                        onChange={event => setLocation(event.target.value)}
                         className="w-full p-2 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-amber-400 focus:outline-none"
-                        readOnly
                     />
                 </div>
 
@@ -140,24 +174,103 @@ const ReportAnIncident: React.FC<{ isOpen?: boolean }> = () => {
 
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4 border-t border-slate-700">
                     <button
-                        className="flex items-center gap-2 text-sm text-amber-400 font-semibold transition-colors"
-                        disabled
+                        className="flex items-center gap-2 text-sm text-amber-400 font-semibold transition-colors disabled:opacity-50"
+                        disabled={loading}
                         type="button"
+                        onClick={handleReset}
                     >
                         Start Over
                     </button>
                     <button
-                        type="button"
-                        disabled
+                        type="submit"
+                        disabled={loading}
                         className="inline-flex items-center justify-center bg-amber-400 text-black font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Generate Incident Report
+                        {loading ? 'Analyzing...' : 'Generate Incident Report'}
                     </button>
                 </div>
             </form>
 
+            {error && (
+                <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
+                    {error}
+                </div>
+            )}
+
             <div className="pt-6 border-t border-slate-700">
-                <ReportResult />
+                {result ? (
+                    <div className="rounded-2xl border border-slate-700/70 bg-slate-900/80 p-6 text-gray-100 space-y-6">
+                        <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-amber-300">
+                                AI Summary
+                            </p>
+                            <p className="mt-3 text-base leading-relaxed text-gray-200">
+                                {result.summary}
+                            </p>
+                        </div>
+
+                        {result.severity && (
+                            <div className="inline-flex items-center rounded-full border border-amber-400/40 bg-amber-400/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-amber-200">
+                                Severity: {result.severity}
+                            </div>
+                        )}
+
+                        <div className="grid gap-6 md:grid-cols-2">
+                            <div>
+                                <h4 className="text-sm font-semibold text-amber-200 mb-3">
+                                    Action Items
+                                </h4>
+                                <ul className="space-y-2 text-sm text-gray-200">
+                                    {result.actionItems.map((item, index) => (
+                                        <li key={index} className="flex gap-2">
+                                            <span className="mt-2 h-1.5 w-1.5 rounded-full bg-amber-400" />
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="text-sm font-semibold text-amber-200 mb-3">
+                                    Legal Notes
+                                </h4>
+                                <ul className="space-y-2 text-sm text-gray-200">
+                                    {result.legalNotes.map((note, index) => (
+                                        <li key={index}>{note}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {result.citations?.length ? (
+                            <div className="rounded-xl border border-slate-700/70 bg-slate-950/60 p-5">
+                                <h4 className="text-sm font-semibold text-amber-200 mb-3">
+                                    Sources
+                                </h4>
+                                <div className="space-y-3 text-sm text-gray-200">
+                                    {result.citations.map((c, index) => (
+                                        <div key={index} className="space-y-1">
+                                            <div className="text-gray-100">{c.claim}</div>
+                                            <a
+                                                href={c.source.url}
+                                                className="text-amber-300 hover:underline"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {c.source.title}
+                                            </a>
+                                            <p className="text-xs text-gray-400">
+                                                {c.source.snippet}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                ) : (
+                    <ReportResult />
+                )}
             </div>
         </div>
     );

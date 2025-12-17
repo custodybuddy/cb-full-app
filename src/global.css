@@ -2,6 +2,7 @@
 :root {
   --font-raleway: 'Raleway', sans-serif;
   --font-prata: 'Prata', serif;
+  --gold-border: #f59e0b;
 }
 
 body {
@@ -10,6 +11,18 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-prata);
+}
+
+h1 {
+    text-align: center;
+    text-transform: capitalize;
+    letter-spacing: 0.12em;
+    color: var(--gold-border);
+}
+
+
+*, *::before, *::after {
+    border-color: var(--gold-border) !important;
 }
 
 /* Shared card styling */

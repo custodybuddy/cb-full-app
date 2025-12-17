@@ -8,11 +8,15 @@ import type { EmailBuddyResponse } from '@/types/ai';
 interface GeneratedResponsesProps {
     response: EmailBuddyResponse;
     disclaimer: string;
+    onReset?: () => void;
+    resetDisabled?: boolean;
 }
 
 const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
     response,
     disclaimer,
+    onReset,
+    resetDisabled = false,
 }) => (
     <div className="animate-fade-in-up">
         <div className="sr-only" role="status" aria-live="polite">Email analysis and drafts are ready.</div>
@@ -20,7 +24,9 @@ const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
             <h3 className="text-lg font-bold text-gray-200">Generated Responses</h3>
             <button
                 className="flex items-center gap-2 text-sm text-amber-400 font-semibold transition-colors"
-                disabled
+                disabled={resetDisabled || !onReset}
+                type="button"
+                onClick={onReset}
             >
                 <RotateCwIcon className="w-4 h-4" />
                 Start Over

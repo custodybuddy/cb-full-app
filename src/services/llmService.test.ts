@@ -1,19 +1,19 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { analyzeIncident, CustodyAIResponse } from './llmService';
+import { describe, it, expect } from 'vitest';
+import { loadEnv } from 'vite';
 
-// Mock API keys for testing (replace with real ones)
-const mockEnv = {
-    VITE_DEEPSEEK_API_KEY: import.meta.env.VITE_DEEPSEEK_API_KEY || 'sk-test',
-    VITE_GEMINI_API_KEY: import.meta.env.VITE_GEMINI_API_KEY || '',
-};
+const env = loadEnv(process.env.NODE_ENV || 'test', process.cwd(), '');
+Object.assign(process.env, env);
+const deepseekKey = process.env.VITE_DEEPSEEK_API_KEY;
+const runLiveTests = process.env.RUN_LIVE_AI_TESTS === '1';
+const itWithKey = deepseekKey && runLiveTests ? it : it.skip;
 
-void mockEnv;
-void beforeAll;
-void afterAll;
-void CustodyAIResponse;
+const loadService = async () => import('./llmService');
 
 describe('llmService', () => {
-    it('should generate structured incident analysis', async () => {
+    itWithKey(
+        'should generate structured incident analysis',
+        async () => {
+        const { analyzeIncident } = await loadService();
         const result = await analyzeIncident(
             'Ex refused to return child after scheduled time, became hostile when confronted.',
             'Ontario'
@@ -24,9 +24,14 @@ describe('llmService', () => {
         expect(result.summary.length).toBeGreaterThan(10);
         expect(Array.isArray(result.actionItems)).toBe(true);
         expect(result.actionItems.length).toBeGreaterThan(0);
-    });
+        },
+        15000
+    );
 
-    it('should include citations when available', async () => {
+    itWithKey(
+        'should include citations when available',
+        async () => {
+        const { analyzeIncident } = await loadService();
         const result = await analyzeIncident(
             'Sample test incident for citation validation.',
             'Ontario'
@@ -38,13 +43,12 @@ describe('llmService', () => {
                 expect(citation.source.url).toMatch(/^https?:\/\//);
             });
         }
-    });
+        },
+        15000
+    );
 
     it('should throw on validation failure', async () => {
-        // Mock bad response - this tests your Zod safety
-        const mockBadResponse = { invalid: 'structure' } as any;
-        void mockBadResponse;
-        // Your service already throws - just verify it doesn't crash
-        await expect(analyzeIncident('test', 'test')).rejects.not.toThrow();
+        const { CustodyAIResponse } = await loadService();
+        expect(() => CustodyAIResponse.parse({ invalid: 'structure' })).toThrow();
     });
 });

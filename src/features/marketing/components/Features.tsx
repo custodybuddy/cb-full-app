@@ -26,8 +26,8 @@ const features: Feature[] = [
         title: <>Report An Incident: <span className="text-amber-400">Catch Them</span> Red-Handed.</>,
         description: 'Transform toxic behavior into court-ready evidence with guided documentation, timestamps, and professional exports.',
         buttonText: 'DOCUMENT THEIR LIES',
-        link: '#',
-        isModal: true,
+        link: '/incident-report',
+        isModal: false,
     },
     {
         id: 'case-analysis',

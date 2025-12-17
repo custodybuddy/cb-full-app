@@ -14,6 +14,7 @@ const PrivacyPolicyPage = lazy(() => import('./features/legal/pages/PrivacyPolic
 const TermsOfUsePage = lazy(() => import('./features/legal/pages/TermsOfUsePage'));
 const JurisdictionWizardPage = lazy(() => import('./features/onboarding/pages/JurisdictionWizardPage'));
 const SupportCalculatorPage = lazy(() => import('./features/support-calculator/pages/SupportCalculatorPage'));
+const IncidentReportPage = lazy(() => import('./features/incident-report/IncidentReportPage'));
 
 export interface RouteConfig {
     path: string;
@@ -41,8 +42,9 @@ export const routes: RouteConfig[] = [
     { path: '/about', label: 'About Us', component: AboutPage, inHeader: true, inFooter: true },
     { path: '/features', label: 'Features', component: FeaturesPage, inHeader: true, inFooter: true },
     { path: '/how-it-works', label: 'How It Works', component: HowItWorksPage, inHeader: true, inFooter: true },
-    { path: '/template-library', label: 'Template Library', component: TemplateLibraryPage, inHeader: true, inFooter: false },
+    { path: '/template-library', label: 'Template Library', component: TemplateLibraryPage, inHeader: false, inFooter: false },
     { path: '/resources', label: 'Resources', component: ResourcesPage, inHeader: true, inFooter: false },
+    { path: '/incident-report', label: 'Incident Report', component: IncidentReportPage, inHeader: false, inFooter: true },
     { path: '/testimonials', label: 'Testimonials', component: TestimonialsPage, inHeader: true, inFooter: true },
     { path: '/donate', label: 'Donate', component: DonatePage, inHeader: true, inFooter: true },
     { path: '/contact', label: 'Contact', component: ContactPage, inHeader: true, inFooter: true },
@@ -50,6 +52,7 @@ export const routes: RouteConfig[] = [
     { path: '/terms', label: 'Terms of Use', component: TermsOfUsePage, inHeader: false, inFooter: true },
     { path: '/onboarding', label: 'Jurisdiction Onboarding', component: JurisdictionWizardPage, inHeader: false, inFooter: false },
     { path: '/support-calculator', label: 'Calculator', component: SupportCalculatorPage, inHeader: true, inFooter: true },
+    { path: '/incidents', label: 'Log Incident', component: IncidentReportPage, inHeader: false, inFooter: false },
 ];
 
 export const externalLinks: ExternalLinkConfig[] = [

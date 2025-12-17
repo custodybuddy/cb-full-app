@@ -11,7 +11,8 @@
 - `npm run dev`: start the Vite dev server.
 - `npm run build`: produce a production build in `dist/`.
 - `npm run preview`: serve the production build locally.
-- `npm test`: run Vitest once in CI mode.
+- `npm run test`: run Vitest once in CI mode.
+- `RUN_LIVE_AI_TESTS=1 npm run test -- services/llmService.test.ts`: run live LLM integration tests (requires API keys and network access).
 - `npm run lint`: lint `src/` and `tests/` with ESLint.
 
 ## Coding Style & Naming Conventions
