@@ -81,9 +81,12 @@ const Features: React.FC = () => {
     return (
         <section id="features" className="bg-slate-950 py-12 md:py-20">
             <div className="container mx-auto px-4 text-center">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-16 animate-fade-in-up">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 animate-fade-in-up">
                     <span className="text-amber-400">AI Tools</span> to<span className="text-amber-400"> Level</span> the<span className="text-amber-400"> <i>Playing Field</i></span>.
                 </h2>
+                <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto mb-16 animate-fade-in-up delay-200">
+                    Court-ready clarity, powered by precision—turn chaos into evidence and reclaim control.
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {features.map((feature, index) => (
                         <Card
