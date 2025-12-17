@@ -7,17 +7,11 @@ import type { EmailBuddyResponse } from '@/types/ai';
 
 interface GeneratedResponsesProps {
     response: EmailBuddyResponse;
-    isAnalysisPanelOpen: boolean;
-    setIsAnalysisPanelOpen: (value: boolean) => void;
-    onStartOver: () => void;
     disclaimer: string;
 }
 
 const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
     response,
-    isAnalysisPanelOpen,
-    setIsAnalysisPanelOpen,
-    onStartOver,
     disclaimer,
 }) => (
     <div className="animate-fade-in-up">
@@ -25,8 +19,8 @@ const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-gray-200">Generated Responses</h3>
             <button
-                onClick={onStartOver}
-                className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 font-semibold transition-colors"
+                className="flex items-center gap-2 text-sm text-amber-400 font-semibold transition-colors"
+                disabled
             >
                 <RotateCwIcon className="w-4 h-4" />
                 Start Over
@@ -34,25 +28,21 @@ const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
-            <AnalysisPanel 
-                analysis={response.analysis}
-                isOpen={isAnalysisPanelOpen}
-                setIsOpen={setIsAnalysisPanelOpen}
-            />
+            <AnalysisPanel analysis={response.analysis} />
 
             <div className="flex-grow grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <div className="bg-slate-900 border border-amber-400/50 rounded-lg p-4 flex flex-col shadow-lg">
-                   <DraftDisplay
-                       title="Primary Recommendation: BIFF"
-                       draft={response.drafts.biff}
-                   />
+                    <DraftDisplay
+                        title="Primary Recommendation: BIFF"
+                        draft={response.drafts.biff}
+                    />
                 </div>
 
                 <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 flex flex-col">
                     <AlternativeDraftsPanel drafts={{
                         "Grey Rock": response.drafts.greyRock,
-                        "Friendly Assertive": response.drafts.friendlyAssertive
-                    }}/>
+                        "Friendly Assertive": response.drafts.friendlyAssertive,
+                    }} />
                 </div>
             </div>
         </div>

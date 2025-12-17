@@ -5,8 +5,6 @@ import SwordsIcon from '@/components/icons/SwordsIcon';
 import MailPlusIcon from '@/components/icons/MailPlusIcon';
 import ShieldHalfIcon from '@/components/icons/ShieldHalfIcon';
 import ScaleIcon from '@/components/icons/ScaleIcon';
-import { useModal } from '@/hooks/useModal';
-import { ModalType } from '@/contexts/ModalContext';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
@@ -19,8 +17,6 @@ const featureIcons: Record<FeatureIcon, React.ReactNode> = {
 };
 
 const Features: React.FC = () => {
-    const { openModal, activeModal } = useModal();
-
     return (
         <section id="features" className="bg-slate-950 py-12 md:py-20">
             <div className="container mx-auto px-4 text-center">
@@ -42,10 +38,9 @@ const Features: React.FC = () => {
                             <p className="text-gray-400 mb-4 flex-grow text-balance">{feature.description}</p>
                             {feature.isModal ? (
                                 <Button
-                                    onClick={() => openModal(feature.id as ModalType)}
                                     className="mt-auto"
-                                    aria-haspopup="dialog"
-                                    aria-expanded={activeModal === feature.id}
+                                    disabled
+                                    aria-disabled="true"
                                 >
                                     {feature.buttonText}
                                 </Button>

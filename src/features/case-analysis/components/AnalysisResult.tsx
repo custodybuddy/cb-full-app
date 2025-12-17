@@ -1,11 +1,5 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { useCaseAnalysisState } from '../useCaseAnalysis';
-import { useTextToSpeech } from '@/hooks/useTextToSpeech';
-import { useTextSizer } from '@/hooks/useTextSizer';
-import { exportElementAsPDF } from '@/utils/exportUtils';
-import { getISODate, getFormattedDate } from '@/utils/dateUtils';
-import { cleanAnalysisForSpeech } from '@/utils/stringUtils';
-
+import React from 'react';
+import type { CaseAnalysisReport } from '@/types/ai';
 import Feedback from '@/features/marketing/components/Feedback';
 import LightbulbIcon from '@/components/icons/LightbulbIcon';
 import GavelIcon from '@/components/icons/GavelIcon';
@@ -18,227 +12,131 @@ import ObligationsPanel from './ObligationsPanel';
 import FlagsPanel from './FlagsPanel';
 import DetailsPanel from './DetailsPanel';
 
-
 type AnalysisTab = 'summary' | 'obligations' | 'flags' | 'details';
 
-interface ActionItem {
+interface ActionItemState {
     item: string;
     deadline?: string;
     source: string;
     completed: boolean;
-    isDeleting: boolean;
 }
 
+const staticResponse: CaseAnalysisReport = {
+    documentTypes: [
+        { type: 'Parenting Plan', source: 'Upload: ParentingPlan.pdf' },
+        { type: 'Email Thread', source: 'Paste: July 2023 Emails' },
+    ],
+    summary: 'The current agreement outlines weekly exchanges on Fridays and alternating holiday schedules. The recent communications indicate recurring late pickups and unapproved schedule changes without notice.',
+    keyClauses: [
+        {
+            clause: 'Weekly exchange occurs every Friday at 6:00 PM at the designated exchange location.',
+            explanation: 'This clause establishes a fixed exchange time and place that should be followed unless both parties agree in writing.',
+            source: 'ParentingPlan.pdf, Section 3.2',
+        },
+        {
+            clause: 'Parents must provide 48 hours notice for non-emergency schedule changes.',
+            explanation: 'Failure to provide notice may be documented as a pattern of non-compliance.',
+            source: 'ParentingPlan.pdf, Section 5.1',
+        },
+    ],
+    discrepancies: [
+        {
+            description: 'Multiple messages indicate pickup delays of 30+ minutes without prior notice.',
+            sources: ['Email Thread, July 14', 'Email Thread, July 28'],
+        },
+    ],
+    legalJargon: [
+        {
+            term: 'Material breach',
+            explanation: 'A significant violation of the agreement that affects the core obligations.',
+        },
+    ],
+    actionItems: [
+        {
+            item: 'Document late pickups with dates, times, and message screenshots.',
+            deadline: 'Ongoing',
+            source: 'Email Thread, July 14',
+        },
+        {
+            item: 'Send a concise notice requesting adherence to the 48-hour notice clause.',
+            deadline: 'Within 7 days',
+            source: 'ParentingPlan.pdf, Section 5.1',
+        },
+    ],
+    legalInsights: 'Verify local rules on documenting parenting time violations and consider mediation before filing any motion.',
+    suggestedNextSteps: 'Summarize the pattern in a timeline, attach supporting evidence, and request written confirmation for any schedule changes.',
+    strategicCommunication: {
+        recommendation: 'Keep responses short, factual, and focused on the schedule clause. Avoid accusations; cite specific dates and requested remedies.',
+        draftEmail: 'Subject: Schedule Compliance\n\nHi [Name],\n\nPer Section 5.1 of our parenting plan, schedule changes require 48 hours notice. On July 14 and July 28 pickups were delayed without notice. Please confirm future changes at least 48 hours in advance and the expected pickup time for this Friday.\n\nThank you,\n[Your Name]',
+    },
+    disclaimer: 'Disclaimer: This document was created using artificial intelligence and is intended to provide helpful information. It is not a source of legal advice. We recommend that you verify the information for accuracy.',
+};
+
+const staticActionItems: ActionItemState[] = staticResponse.actionItems.map(item => ({
+    ...item,
+    completed: false,
+}));
+
+const tabConfig: { id: AnalysisTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'summary', label: 'Summary', icon: <LightbulbIcon className="w-4 h-4" /> },
+    { id: 'obligations', label: 'Obligations', icon: <GavelIcon className="w-4 h-4" /> },
+    { id: 'flags', label: 'Red Flags', icon: <AlertTriangleIcon className="w-4 h-4" /> },
+    { id: 'details', label: 'Details', icon: <FileTextIcon className="w-4 h-4" /> },
+];
+
 const AnalysisResult: React.FC = () => {
-    const { analysisResponse: response, jurisdiction } = useCaseAnalysisState();
-    const reportRef = useRef<HTMLDivElement>(null);
-    const { isSpeaking, isPaused, speak, cancel, pause, resume } = useTextToSpeech();
-    const [isExportingPdf, setIsExportingPdf] = useState(false);
-    const [activeTab, setActiveTab] = useState<AnalysisTab>('summary');
-    const [renderAllForPdf, setRenderAllForPdf] = useState(false);
-    const [isCopied, setIsCopied] = useState(false);
-    const [isStrategicEmailEditing, setIsStrategicEmailEditing] = useState(false);
-    const [editedStrategicEmail, setEditedStrategicEmail] = useState(response?.strategicCommunication?.draftEmail || '');
-    const textSizer = useTextSizer();
-    const [actionItems, setActionItems] = useState<ActionItem[]>([]);
-    const disclaimerText = 'Disclaimer: This document was created using artificial intelligence and is intended to provide helpful information. It is not a source of legal advice. We recommend that you verify the information for accuracy.';
-
-    // Initialize/Reset action items state when response changes
-    useEffect(() => {
-        if (response?.actionItems) {
-            setActionItems(
-                response.actionItems.map(item => ({
-                    ...item,
-                    completed: false,
-                    isDeleting: false,
-                }))
-            );
-        }
-    }, [response]);
-    
-    useEffect(() => {
-        if (isCopied) {
-            const timer = setTimeout(() => setIsCopied(false), 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [isCopied]);
-
-    useEffect(() => {
-        // When the main response changes (e.g., new analysis), reset the email draft and editing state.
-        if (response?.strategicCommunication?.draftEmail) {
-            setEditedStrategicEmail(response.strategicCommunication.draftEmail);
-        } else {
-            setEditedStrategicEmail('');
-        }
-        setIsStrategicEmailEditing(false);
-    }, [response]);
-
-    if (!response) {
-        return (
-            <div className="text-center p-4 text-gray-400">
-                <p>No analysis data to display.</p>
-            </div>
-        );
-    }
-    
-    const handleExportPdf = async () => {
-        if (!reportRef.current) return;
-        
-        setIsExportingPdf(true);
-        setRenderAllForPdf(true);
-
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        try {
-            const isoDate = getISODate();
-            const friendlyDate = getFormattedDate();
-            const filename = `CustodyBuddy-Analysis-${isoDate}.pdf`;
-            const headerText = `AI Case Analysis - Generated by CustodyBuddy.com on ${friendlyDate}`;
-            await exportElementAsPDF(reportRef.current, filename, headerText);
-        } catch (error) {
-            console.error("Failed to export PDF:", error);
-            alert("Sorry, there was an issue creating the PDF. Please try again.");
-        } finally {
-            setRenderAllForPdf(false);
-            setIsExportingPdf(false);
-        }
-    };
-
-    const handlePlayPause = () => {
-        if (!isSpeaking) {
-            const plainText = cleanAnalysisForSpeech(response);
-            speak(plainText);
-        } else if (isPaused) {
-            resume();
-        } else {
-            pause();
-        }
-    };
-
-    const handleStop = () => {
-        cancel();
-    };
-
-    const handleCopyStrategicEmail = () => {
-        navigator.clipboard.writeText(editedStrategicEmail);
-        setIsCopied(true);
-    };
-
-    const handleToggleComplete = (index: number) => {
-        setActionItems(prevItems =>
-            prevItems.map((item, i) =>
-                i === index ? { ...item, completed: !item.completed } : item
-            )
-        );
-    };
-    
-    const handleDeleteItem = (index: number) => {
-        setActionItems(prevItems =>
-            prevItems.map((item, i) =>
-                i === index ? { ...item, isDeleting: true } : item
-            )
-        );
-    };
-
-
-    const tabConfig: { id: AnalysisTab; label: string; icon: React.ReactNode; hasContent: boolean }[] = useMemo(() => ([
-        { id: 'summary', label: 'Summary', icon: <LightbulbIcon className="w-4 h-4" />, hasContent: !!response.summary },
-        { id: 'obligations', label: 'Obligations', icon: <GavelIcon className="w-4 h-4" />, hasContent: (response.keyClauses?.length ?? 0) > 0 || (response.actionItems?.length ?? 0) > 0 },
-        { id: 'flags', label: 'Red Flags', icon: <AlertTriangleIcon className="w-4 h-4" />, hasContent: (response.discrepancies?.length ?? 0) > 0 },
-        { id: 'details', label: 'Details', icon: <FileTextIcon className="w-4 h-4" />, hasContent: (response.legalJargon?.length ?? 0) > 0 || (response.documentTypes?.length ?? 0) > 0 },
-    ]), [response]);
-
-    useEffect(() => {
-        if (renderAllForPdf) return;
-        const currentTabHasContent = tabConfig.find(t => t.id === activeTab)?.hasContent;
-        if (!currentTabHasContent) {
-            const firstAvailableTab = tabConfig.find(t => t.hasContent);
-            if (firstAvailableTab && firstAvailableTab.id !== activeTab) {
-                setActiveTab(firstAvailableTab.id);
-            }
-        }
-    }, [activeTab, tabConfig, renderAllForPdf]);
-
     return (
         <div className="mt-6 animate-fade-in-up">
-            <AnalysisActionsBar
-                isSpeaking={isSpeaking}
-                isPaused={isPaused}
-                isExportingPdf={isExportingPdf}
-                textSizer={textSizer}
-                onPlayPause={handlePlayPause}
-                onStop={handleStop}
-                onExportPdf={handleExportPdf}
-            />
+            <AnalysisActionsBar />
 
             <div role="tablist" aria-label="Analysis Sections" className="flex border-b border-slate-700 bg-slate-900 overflow-x-auto">
-                {tabConfig.map(tab => tab.hasContent && (
+                {tabConfig.map(tab => (
                     <button
                         key={tab.id}
-                        id={`tab-${tab.id}`}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors border-b-2 flex-shrink-0 ${activeTab === tab.id ? 'border-amber-400 text-amber-400' : 'border-transparent text-gray-400 hover:text-white'}`}
+                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors border-b-2 flex-shrink-0 ${tab.id === 'summary' ? 'border-amber-400 text-amber-400' : 'border-transparent text-gray-400'}`}
                         role="tab"
-                        aria-selected={activeTab === tab.id}
-                        aria-controls={`panel-${tab.id}`}
+                        aria-selected={tab.id === 'summary'}
+                        disabled
                     >
                         {tab.icon}
                         {tab.label}
                     </button>
                 ))}
             </div>
-            
-            <div ref={reportRef} className="p-6 bg-slate-900 border-x border-b border-slate-700 rounded-b-lg prose prose-invert max-w-none">
-                {(activeTab === 'summary' || renderAllForPdf) && tabConfig[0].hasContent && (
-                    <section id="panel-summary" role="tabpanel" aria-labelledby="tab-summary" className={renderAllForPdf ? 'mb-8' : ''}>
-                        <SummaryPanel
-                            summary={response.summary}
-                            suggestedNextSteps={response.suggestedNextSteps}
-                            strategicCommunication={response.strategicCommunication}
-                            strategicDraftEmail={editedStrategicEmail}
-                            isStrategicEmailEditing={isStrategicEmailEditing}
-                            isCopied={isCopied}
-                            onToggleEdit={() => setIsStrategicEmailEditing(!isStrategicEmailEditing)}
-                            onCopy={handleCopyStrategicEmail}
-                            onDraftChange={setEditedStrategicEmail}
-                        />
-                    </section>
-                )}
-                 {(activeTab === 'obligations' || renderAllForPdf) && tabConfig[1].hasContent && (
-                    <section id="panel-obligations" role="tabpanel" aria-labelledby="tab-obligations" className={renderAllForPdf ? 'mb-8' : ''}>
-                        <ObligationsPanel
-                            keyClauses={response.keyClauses}
-                            actionItems={actionItems}
-                            onToggleComplete={handleToggleComplete}
-                            onDelete={handleDeleteItem}
-                        />
-                    </section>
-                )}
-                {(activeTab === 'flags' || renderAllForPdf) && tabConfig[2].hasContent && (
-                    <section id="panel-flags" role="tabpanel" aria-labelledby="tab-flags" className={`${renderAllForPdf ? 'mb-8' : ''}`}>
-                        <FlagsPanel discrepancies={response.discrepancies} />
-                    </section>
-                )}
-                {(activeTab === 'details' || renderAllForPdf) && tabConfig[3].hasContent && (
-                    <section id="panel-details" role="tabpanel" aria-labelledby="tab-details" className={renderAllForPdf ? 'mb-8' : ''}>
-                        <DetailsPanel
-                            legalJargon={response.legalJargon}
-                            documentTypes={response.documentTypes}
-                        />
-                    </section>
-                )}
-                {((response.legalInsights && response.legalInsights.length > 0) || (response.actionItems?.length ?? 0) > 0) && (
-                    <section className={renderAllForPdf ? 'mb-8' : ''}>
-                        <h4 className="text-xl font-bold text-gray-200 mb-3 flex items-center gap-2"><GavelIcon className="text-amber-400 w-5 h-5" />Legal References</h4>
-                        <AnalysisReferences
-                            legalInsights={response.legalInsights ?? ''}
-                            sources={response.actionItems?.map(a => a.source).filter(Boolean) ?? []}
-                        />
-                    </section>
-                )}
 
-                <div className={renderAllForPdf ? '' : 'pt-6 border-t border-slate-700/50 mt-8'}>
-                    <p className="text-xs text-gray-500 italic">{disclaimerText}</p>
+            <div className="p-6 bg-slate-900 border-x border-b border-slate-700 rounded-b-lg prose prose-invert max-w-none">
+                <section id="panel-summary" role="tabpanel" aria-labelledby="tab-summary" className="mb-8">
+                    <SummaryPanel
+                        summary={staticResponse.summary}
+                        suggestedNextSteps={staticResponse.suggestedNextSteps}
+                        strategicCommunication={staticResponse.strategicCommunication}
+                    />
+                </section>
+                <section id="panel-obligations" role="tabpanel" aria-labelledby="tab-obligations" className="mb-8">
+                    <ObligationsPanel
+                        keyClauses={staticResponse.keyClauses}
+                        actionItems={staticActionItems}
+                    />
+                </section>
+                <section id="panel-flags" role="tabpanel" aria-labelledby="tab-flags" className="mb-8">
+                    <FlagsPanel discrepancies={staticResponse.discrepancies} />
+                </section>
+                <section id="panel-details" role="tabpanel" aria-labelledby="tab-details" className="mb-8">
+                    <DetailsPanel
+                        legalJargon={staticResponse.legalJargon}
+                        documentTypes={staticResponse.documentTypes}
+                    />
+                </section>
+                <section className="mb-8">
+                    <h4 className="text-xl font-bold text-gray-200 mb-3 flex items-center gap-2"><GavelIcon className="text-amber-400 w-5 h-5" />Legal References</h4>
+                    <AnalysisReferences
+                        legalInsights={staticResponse.legalInsights ?? ''}
+                        sources={staticResponse.actionItems.map(item => item.source)}
+                    />
+                </section>
+
+                <div className="pt-6 border-t border-slate-700/50 mt-8">
+                    <p className="text-xs text-gray-500 italic">{staticResponse.disclaimer}</p>
                     <div className="no-pdf">
                         <Feedback />
                     </div>

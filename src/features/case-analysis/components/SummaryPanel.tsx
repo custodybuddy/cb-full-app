@@ -7,24 +7,12 @@ interface SummaryPanelProps {
     summary: string;
     suggestedNextSteps?: string | null;
     strategicCommunication?: CaseAnalysisReport['strategicCommunication'];
-    strategicDraftEmail: string;
-    isStrategicEmailEditing: boolean;
-    isCopied: boolean;
-    onToggleEdit: () => void;
-    onCopy: () => void;
-    onDraftChange: (value: string) => void;
 }
 
 const SummaryPanel: React.FC<SummaryPanelProps> = ({
     summary,
     suggestedNextSteps,
     strategicCommunication,
-    strategicDraftEmail,
-    isStrategicEmailEditing,
-    isCopied,
-    onToggleEdit,
-    onCopy,
-    onDraftChange,
 }) => {
     return (
         <div className="space-y-8">
@@ -48,12 +36,7 @@ const SummaryPanel: React.FC<SummaryPanelProps> = ({
             {strategicCommunication && (
                 <StrategicCommunication
                     recommendation={strategicCommunication.recommendation}
-                    draftEmail={strategicDraftEmail}
-                    isEditing={isStrategicEmailEditing}
-                    isCopied={isCopied}
-                    onToggleEdit={onToggleEdit}
-                    onCopy={onCopy}
-                    onDraftChange={onDraftChange}
+                    draftEmail={strategicCommunication.draftEmail}
                 />
             )}
         </div>

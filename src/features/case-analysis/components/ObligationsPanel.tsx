@@ -7,21 +7,16 @@ interface ActionItemState {
     deadline?: string;
     source: string;
     completed: boolean;
-    isDeleting: boolean;
 }
 
 interface ObligationsPanelProps {
     keyClauses: CaseAnalysisReport['keyClauses'];
     actionItems: ActionItemState[];
-    onToggleComplete: (index: number) => void;
-    onDelete: (index: number) => void;
 }
 
 const ObligationsPanel: React.FC<ObligationsPanelProps> = ({
     keyClauses = [],
     actionItems,
-    onToggleComplete,
-    onDelete,
 }) => {
     if (!keyClauses.length && !actionItems.length) return null;
 
@@ -44,8 +39,6 @@ const ObligationsPanel: React.FC<ObligationsPanelProps> = ({
             {actionItems.length > 0 && (
                 <ActionItemsList
                     items={actionItems}
-                    onToggleComplete={onToggleComplete}
-                    onDelete={onDelete}
                 />
             )}
         </div>

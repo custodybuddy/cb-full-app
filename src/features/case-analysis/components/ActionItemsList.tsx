@@ -6,16 +6,13 @@ interface ActionItem {
     deadline?: string;
     source: string;
     completed: boolean;
-    isDeleting: boolean;
 }
 
 interface ActionItemsListProps {
     items: ActionItem[];
-    onToggleComplete: (index: number) => void;
-    onDelete: (index: number) => void;
 }
 
-const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, onToggleComplete, onDelete }) => {
+const ActionItemsList: React.FC<ActionItemsListProps> = ({ items }) => {
     if (!items.length) return null;
 
     return (
@@ -25,14 +22,14 @@ const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, onToggleComple
                 {items.map((item, i) => (
                     <li
                         key={i}
-                        className={`task-item flex items-start gap-3 p-3 bg-slate-800 rounded-md border border-slate-700 ${item.completed ? 'completed' : ''} ${item.isDeleting ? 'deleting' : ''}`}
+                        className={`task-item flex items-start gap-3 p-3 bg-slate-800 rounded-md border border-slate-700 ${item.completed ? 'completed' : ''}`}
                     >
                         <input
                             type="checkbox"
                             id={`action-item-${i}`}
                             checked={item.completed}
-                            onChange={() => onToggleComplete(i)}
                             className="mt-1 h-5 w-5 flex-shrink-0 rounded border-gray-400 bg-slate-700 text-amber-400 focus:ring-amber-500 cursor-pointer no-pdf"
+                            disabled
                         />
                         <div className="flex-grow">
                             <label htmlFor={`action-item-${i}`} className="task-text cursor-pointer">
@@ -44,9 +41,9 @@ const ActionItemsList: React.FC<ActionItemsListProps> = ({ items, onToggleComple
                             <p className="text-xs text-gray-500 mt-1">(Source: {item.source})</p>
                         </div>
                         <button
-                            onClick={() => onDelete(i)}
                             className="flex-shrink-0 text-gray-500 hover:text-red-400 transition-colors p-1 rounded-full no-pdf"
                             aria-label={`Delete action item: ${item.item}`}
+                            disabled
                         >
                             <Trash2Icon className="w-4 h-4" />
                         </button>
