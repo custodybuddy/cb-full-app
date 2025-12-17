@@ -1,34 +1,47 @@
 import React from 'react';
 import HelpCircleIcon from '@/components/icons/HelpCircleIcon';
+import { CalculationResult, CalculatorInputs } from '@/types';
 
 const formatCurrency = (value: number) => `$${value.toLocaleString('en-CA')}`;
 
-const SAMPLE_RESULTS = {
+const FALLBACK_RESULT: CalculationResult = {
     childSupport: 820,
+    childSupportDirection: 'payor_to_recipient',
     spousalSupportLow: 950,
-    spousalSupportHigh: 1450,
     spousalSupportMid: 1200,
+    spousalSupportHigh: 1450,
+    combinedSupportLow: 1800,
     combinedSupportMid: 2020,
-    payorIncome: 95000,
-    recipientIncome: 55000,
-    section7Total: 550,
-    section7Payor: 330,
-    section7Recipient: 220,
+    combinedSupportHigh: 2250,
+    duration: { minYears: 4, maxYears: 8, indefinite: false },
+    notes: [],
 };
 
-const ResultsDisplay: React.FC = () => {
-    const {
-        childSupport,
-        spousalSupportLow,
-        spousalSupportHigh,
-        spousalSupportMid,
-        combinedSupportMid,
-        payorIncome,
-        recipientIncome,
-        section7Total,
-        section7Payor,
-        section7Recipient,
-    } = SAMPLE_RESULTS;
+interface ResultsDisplayProps {
+    results: CalculationResult | null;
+    inputs: CalculatorInputs;
+}
+
+const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, inputs }) => {
+    const displayResults = results ?? FALLBACK_RESULT;
+    const payorIncome = Number(inputs.payorIncome) || 95000;
+    const recipientIncome = Number(inputs.recipientIncome) || 55000;
+    const childcare = Number(inputs.specialExpenseChildcare) || 350;
+    const education = Number(inputs.specialExpenseEducation) || 80;
+    const health = Number(inputs.specialExpenseHealth) || 120;
+    const section7Total = childcare + education + health;
+    const incomeSum = payorIncome + recipientIncome || 1;
+    const payorShare = section7Total * (payorIncome / incomeSum);
+    const recipientShare = section7Total * (recipientIncome / incomeSum);
+
+    const childSupportDirectionLabel =
+        displayResults.childSupportDirection === 'recipient_to_payor'
+            ? 'Recipient → Payor'
+            : displayResults.childSupportDirection === 'payor_to_recipient'
+              ? 'Payor → Recipient'
+              : 'Set-off Pending';
+    const parentingNote =
+        inputs.parentingType === 'shared' ? 'Parenting: Shared (set-off)' : `Parenting: ${inputs.parentingType}`;
 
     return (
         <div className="space-y-6">
@@ -61,10 +74,10 @@ const ResultsDisplay: React.FC = () => {
                                 Child Support (monthly)
                             </p>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-bold text-yellow-300">{formatCurrency(childSupport)}</span>
-                                <span className="text-sm text-slate-400">Payor → Recipient</span>
+                                <span className="text-3xl font-bold text-yellow-300">{formatCurrency(displayResults.childSupport)}</span>
+                                <span className="text-sm text-slate-400">{childSupportDirectionLabel}</span>
                             </div>
-                            <p className="text-xs text-slate-400 mt-1">Parenting: Shared (set-off)</p>
+                            <p className="text-xs text-slate-400 mt-1">{parentingNote}</p>
                         </div>
 
                         <div className="bg-slate-900/80 rounded-xl border border-slate-800/80 p-4 shadow-inner shadow-slate-900/30">
@@ -75,17 +88,20 @@ const ResultsDisplay: React.FC = () => {
                                 </span>
                             </p>
                             <div className="flex items-baseline gap-2 text-yellow-200">
-                                <span className="text-2xl font-bold">{formatCurrency(spousalSupportLow)}</span>
+                                <span className="text-2xl font-bold">{formatCurrency(displayResults.spousalSupportLow)}</span>
                                 <span className="text-sm text-slate-400">to</span>
-                                <span className="text-2xl font-bold">{formatCurrency(spousalSupportHigh)}</span>
+                                <span className="text-2xl font-bold">{formatCurrency(displayResults.spousalSupportHigh)}</span>
                             </div>
-                            <p className="text-sm text-slate-300">Midpoint: {formatCurrency(spousalSupportMid)}</p>
+                            <p className="text-sm text-slate-300">Midpoint: {formatCurrency(displayResults.spousalSupportMid)}</p>
                             <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">
-                                <span>Duration: 4-8 years</span>
+                                <span>
+                                    Duration: {displayResults.duration.minYears}-{displayResults.duration.maxYears}{' '}
+                                    {displayResults.duration.indefinite ? '(Indefinite possible)' : 'years'}
+                                </span>
                                 <HelpCircleIcon className="w-4 h-4 text-amber-300 opacity-80" />
                             </p>
                             <p className="text-xs text-slate-300 mt-2">
-                                Net (to recipient, midpoint): <span className="text-yellow-200 font-semibold">{formatCurrency(combinedSupportMid)}</span>
+                                Net (to recipient, midpoint): <span className="text-yellow-200 font-semibold">{formatCurrency(displayResults.combinedSupportMid)}</span>
                             </p>
                         </div>
                     </div>
@@ -94,8 +110,8 @@ const ResultsDisplay: React.FC = () => {
                         <p className="text-xs uppercase tracking-[0.2em] text-amber-200 font-semibold mb-1">Section 7 Special Expenses (monthly)</p>
                         <div className="flex flex-wrap gap-4 text-sm text-slate-200">
                             <span>Total: {formatCurrency(section7Total)}</span>
-                            <span>Payor Share (60%): {formatCurrency(section7Payor)}</span>
-                            <span>Recipient Share (40%): {formatCurrency(section7Recipient)}</span>
+                            <span>Payor Share ({Math.round((payorIncome / incomeSum) * 100)}%): {formatCurrency(payorShare)}</span>
+                            <span>Recipient Share ({Math.round((recipientIncome / incomeSum) * 100)}%): {formatCurrency(recipientShare)}</span>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">Shared pro rata to net incomes.</p>
                     </div>
@@ -103,7 +119,7 @@ const ResultsDisplay: React.FC = () => {
                     <div className="bg-slate-900/80 rounded-xl border border-slate-800/80 p-4">
                         <p className="text-sm font-semibold text-white mb-2">Notes</p>
                         <ul className="space-y-2 text-sm text-slate-200 list-disc list-inside">
-                            <li>Shared parenting set-off applied using sample incomes.</li>
+                            <li>Shared parenting set-off applied using entered incomes.</li>
                             <li>SSAG values shown as estimated monthly ranges.</li>
                             <li>Consult a family lawyer before filing or negotiating.</li>
                         </ul>

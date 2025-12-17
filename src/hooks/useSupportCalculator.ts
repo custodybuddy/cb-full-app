@@ -5,7 +5,7 @@ import { validateSupportCalculator } from '@/validation/forms';
 
 export const useSupportCalculator = () => {
     const [inputs, setInputs] = useState<CalculatorInputs>(DEFAULT_INPUTS);
-    const [results, setResults] = useState<CalculationResult | null>(null);
+    const [results, setResults] = useState<CalculationResult | null>(() => calculateSupport(DEFAULT_INPUTS));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const clearFieldError = (field: keyof CalculatorInputs | string) => {
@@ -62,9 +62,20 @@ export const useSupportCalculator = () => {
         if (validation.isValid) {
             const calculatedResults = calculateSupport(inputs);
             setResults(calculatedResults);
+            return calculatedResults;
         } else {
             setResults(null);
+            return null;
         }
+    };
+
+    const getExplanationContext = (nextResult?: CalculationResult | null) => {
+        const contextResult = nextResult ?? results;
+        if (!contextResult) return null;
+        return {
+            amount: contextResult.combinedSupportMid,
+            inputsSummary: buildInputsSummary(inputs, contextResult),
+        };
     };
 
     return {
@@ -74,5 +85,48 @@ export const useSupportCalculator = () => {
         handleInputChange,
         handleChildAgeChange,
         handleCalculate,
+        getExplanationContext,
     };
+};
+
+const formatCurrency = (value: number) => `$${value.toLocaleString('en-CA', { maximumFractionDigits: 0 })}`;
+
+const buildInputsSummary = (inputs: CalculatorInputs, result?: CalculationResult | null) => {
+    const payorIncome = Number(inputs.payorIncome) || 0;
+    const recipientIncome = Number(inputs.recipientIncome) || 0;
+    const numChildren = Math.max(0, parseInt(inputs.numChildren, 10) || 0);
+    const childcare = Number(inputs.specialExpenseChildcare) || 0;
+    const education = Number(inputs.specialExpenseEducation) || 0;
+    const health = Number(inputs.specialExpenseHealth) || 0;
+    const section7Total = childcare + education + health;
+
+    const parts: string[] = [
+        `Payor income: ${formatCurrency(payorIncome)}`,
+        `Recipient income: ${formatCurrency(recipientIncome)}`,
+        `Parenting time split: Payor ${inputs.payorParentingTime || '0'}% / Recipient ${inputs.recipientParentingTime || '0'}%`,
+        `Parenting type: ${inputs.parentingType}`,
+    ];
+
+    if (numChildren > 0) {
+        const ages = inputs.childAges.filter(Boolean).join(', ') || 'ages undisclosed';
+        parts.push(`${numChildren} child${numChildren > 1 ? 'ren' : ''} (ages ${ages})`);
+    }
+
+    if (section7Total > 0) {
+        parts.push(
+            `Section 7 monthly: ${formatCurrency(section7Total)} (childcare ${formatCurrency(childcare)}, health ${formatCurrency(
+                health
+            )}, education ${formatCurrency(education)})`
+        );
+    }
+
+    if (result) {
+        parts.push(`Guideline combined midpoint: ${formatCurrency(result.combinedSupportMid)}`);
+        parts.push(`Child support direction: ${result.childSupportDirection}`);
+        if (result.undueHardshipApplied) {
+            parts.push('Undue hardship adjustment applied');
+        }
+    }
+
+    return parts.join('; ');
 };

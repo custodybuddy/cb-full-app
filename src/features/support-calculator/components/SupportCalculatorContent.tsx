@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Calculator } from 'lucide-react';
 import { useSupportCalculator } from '../useSupportCalculator';
+import { useSupportExplanation } from '../useSupportExplanation';
 import CalculatorForm from './CalculatorForm';
 import ResultsDisplay from './ResultsDisplay';
 
@@ -11,7 +12,11 @@ const LAYOUT_CLASSNAMES = {
 
 const HEADER_COPY = {
     badge: 'SupportCalc CA',
-    title: 'Spousal & Child Support Estimator',
+    title: (
+        <>
+            Spousal & <span className="text-amber-300">Child Support</span> Estimator
+        </>
+    ),
     description:
         'Uses simplified SSAG-inspired spousal ranges and child support set-off estimates. For guidance only; confirm figures with a family law professional.',
 };
@@ -24,7 +29,18 @@ const SupportCalculatorContent: React.FC<SupportCalculatorContentProps> = ({ lay
     const titleId = useMemo(() => 'support-calc-title', []);
     const descId = useMemo(() => 'support-calc-description', []);
 
-    const { inputs, results, errors, handleInputChange, handleChildAgeChange, handleCalculate } = useSupportCalculator();
+    const { inputs, results, errors, handleInputChange, handleChildAgeChange, handleCalculate, getExplanationContext } = useSupportCalculator();
+    const { explain, result: explanation, loading: explaining, error: explanationError, reset: resetExplanation } = useSupportExplanation();
+
+    const handleExplainClick = async () => {
+        const context = getExplanationContext(results ?? handleCalculate());
+        if (!context) return;
+        await explain({
+            jurisdiction: inputs.jurisdiction || 'Ontario',
+            calculatedAmount: context.amount,
+            inputsSummary: context.inputsSummary,
+        });
+    };
 
     const containerClasses = LAYOUT_CLASSNAMES[layout];
 
@@ -59,6 +75,77 @@ const SupportCalculatorContent: React.FC<SupportCalculatorContentProps> = ({ lay
                     onCalculate={handleCalculate}
                 />
                 <ResultsDisplay results={results} inputs={inputs} />
+                <div className="bg-slate-900/70 backdrop-blur-sm rounded-2xl shadow-xl border border-yellow-400/25 p-6 md:p-8 space-y-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-amber-200 font-semibold">Need context?</p>
+                            <h3 className="text-xl font-semibold text-white">Explain this support result</h3>
+                            <p className="text-sm text-slate-300">
+                                Generates a plain-language rationale for the current estimate plus documentation tips.
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                            <button
+                                type="button"
+                                onClick={handleExplainClick}
+                                disabled={explaining}
+                                className="inline-flex items-center justify-center rounded-full bg-amber-500 px-5 py-2 font-semibold text-slate-950 hover:bg-amber-400 transition disabled:opacity-50"
+                            >
+                                {explaining ? 'Explaining…' : 'Generate Explanation'}
+                            </button>
+                            {explanation && (
+                                <button
+                                    type="button"
+                                    onClick={resetExplanation}
+                                    className="text-xs font-semibold uppercase tracking-wide text-slate-300 hover:text-white"
+                                >
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {explanationError && (
+                        <div className="rounded-xl border border-red-300/50 bg-red-900/30 px-4 py-3 text-sm text-red-200">
+                            {explanationError}
+                        </div>
+                    )}
+
+                    {explanation && (
+                        <div className="space-y-4">
+                            <div>
+                                <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-200">Summary</h4>
+                                <p className="mt-2 text-slate-100 leading-relaxed">{explanation.plainLanguageSummary}</p>
+                            </div>
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4">
+                                    <h5 className="text-sm font-semibold text-white mb-2">Key Factors</h5>
+                                    <ul className="space-y-1 text-sm text-slate-200 list-disc list-inside">
+                                        {explanation.keyFactors.map((factor, idx) => (
+                                            <li key={idx}>{factor}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4">
+                                    <h5 className="text-sm font-semibold text-white mb-2">Edge Cases</h5>
+                                    <ul className="space-y-1 text-sm text-slate-200 list-disc list-inside">
+                                        {explanation.edgeCases.map((caseNote, idx) => (
+                                            <li key={idx}>{caseNote}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4">
+                                <h5 className="text-sm font-semibold text-white mb-2">Documentation Tips</h5>
+                                <ul className="space-y-1 text-sm text-slate-200 list-disc list-inside">
+                                    {explanation.documentationTips.map((tip, idx) => (
+                                        <li key={idx}>{tip}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </section>
     );

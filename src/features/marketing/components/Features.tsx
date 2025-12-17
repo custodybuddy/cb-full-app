@@ -17,6 +17,7 @@ interface Feature {
     buttonText: string;
     link: string;
     isModal: boolean;
+    badge?: string;
 }
 
 const features: Feature[] = [
@@ -35,8 +36,8 @@ const features: Feature[] = [
         title: <>Family Law Case Analysis Tool: Level the <span className="text-amber-400">Playing Field</span>.</>,
         description: 'Decode legal documents with AI analysis, get plain English explanations, and receive next-step recommendations.',
         buttonText: 'EXPOSE THE TRUTH',
-        link: '#',
-        isModal: true,
+        link: '/case-analysis',
+        isModal: false,
     },
     {
         id: 'email-buddy',
@@ -44,8 +45,8 @@ const features: Feature[] = [
         title: <>Email Law Buddy: <span className="text-amber-400">Shut Down</span> the Games.</>,
         description: 'Stop emotional manipulation with professional, AI-drafted responses that maintain composure and build your legal case.',
         buttonText: 'STOP THE GAMES',
-        link: '#',
-        isModal: true,
+        link: '/email-buddy',
+        isModal: false,
     },
     {
         id: 'false-allegation',
@@ -60,10 +61,11 @@ const features: Feature[] = [
         id: 'support-calculator',
         icon: 'ScaleIcon',
         title: <>SupportCalc CA: <span className="text-amber-400">Spousal & Child</span> Support.</>,
-        description: 'Estimate SSAG spousal ranges and simplified child support set-offs with clear notes for Canadian family law.',
+        description: 'Estimate SSAG spousal ranges, see simplified set-offs, and now get a plain-language explanation of exactly why the amount makes sense.',
         buttonText: 'RUN CALCULATOR',
         link: '/support-calculator',
         isModal: false,
+        badge: 'NEW: EXPLAINER',
     },
 ];
 
@@ -88,7 +90,12 @@ const Features: React.FC = () => {
                             key={index}
                             className={`h-full p-8 flex flex-col items-center animate-fade-in-up delay-${index * 100} transition-all duration-300 ease-out hover:bg-slate-700/80 motion-safe:hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-400/10 border border-amber-400/50 hover:border-amber-400`}
                         >
-                            <div className="p-4 rounded-full bg-amber-400 text-slate-900 mb-4">
+                            <div className="p-4 rounded-full bg-amber-400 text-slate-900 mb-4 relative">
+                                {feature.badge && (
+                                    <span className="absolute -top-2 -right-2 bg-slate-950 text-amber-300 text-[10px] font-semibold uppercase tracking-[0.2em] px-3 py-1 rounded-full border border-amber-400">
+                                        {feature.badge}
+                                    </span>
+                                )}
                                 {featureIcons[feature.icon]}
                             </div>
                             <h3 className="text-2xl font-bold mb-2 text-balance">

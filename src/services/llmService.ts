@@ -47,6 +47,27 @@ export const EmailBuddyResponseSchema = z.object({
 
 export type EmailBuddyResponse = z.infer<typeof EmailBuddyResponseSchema>;
 
+export const CaseAnalysisResponseSchema = z.object({
+    overview: z.string(),
+    obligations: z.array(z.string()),
+    rights: z.array(z.string()).optional(),
+    deadlines: z.array(z.string()),
+    conflicts: z.array(z.string()),
+    actionItems: z.array(z.string()),
+    notesForLawyer: z.array(z.string()),
+});
+
+export type CaseAnalysisResponse = z.infer<typeof CaseAnalysisResponseSchema>;
+
+export const SupportExplanationResponse = z.object({
+    plainLanguageSummary: z.string(),
+    keyFactors: z.array(z.string()),
+    edgeCases: z.array(z.string()),
+    documentationTips: z.array(z.string()),
+});
+
+export type SupportExplanationResponse = z.infer<typeof SupportExplanationResponse>;
+
 const parseJson = (content: string | null | undefined) => {
     if (!content) return null;
     try {
@@ -188,4 +209,107 @@ ${input.rawEmail}`.trim();
     if (geminiResult) return geminiResult;
 
     throw new Error('Email Buddy analysis failed with all providers.');
+}
+
+export async function analyzeCaseDocuments(input: {
+    jurisdiction: string;
+    mainText: string;
+    secondaryText?: string;
+}): Promise<CaseAnalysisResponse> {
+    if (!deepseekClient && !geminiClient) {
+        throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
+    }
+
+    const system = `You are CustodyBuddy Case Analysis, helping self-represented parents interpret existing court orders, agreements, and parenting plans.
+
+Your job:
+- Identify clear obligations, rights, and deadlines.
+- Spot conflicts or inconsistencies between documents (e.g., order vs. agreement).
+- Suggest neutral, practical "actionItems" for tracking compliance and preparing questions for a lawyer.
+- Do NOT give legal advice, do NOT say what motions to file. Stay informational and neutral.
+
+Return ONLY valid JSON with this exact shape:
+{
+  "overview": "2-4 sentence plain-language summary of what these documents are mainly doing.",
+  "obligations": ["Obligation 1", "Obligation 2"],
+  "rights": ["Right 1", "Right 2"],
+  "deadlines": ["Deadline or timeframe 1", "Deadline 2"],
+  "conflicts": ["Conflict or ambiguity 1", "Conflict 2"],
+  "actionItems": ["Track X", "Document Y"],
+  "notesForLawyer": ["Ask lawyer about...", "Clarify whether..."]
+}`;
+
+    const prompt = `Jurisdiction: ${input.jurisdiction}
+
+Primary document text:
+${input.mainText}
+
+${input.secondaryText ? `Secondary / related document text:
+${input.secondaryText}` : ''}`.trim();
+
+    const deepseekResult = await callDeepseek(
+        CaseAnalysisResponseSchema,
+        system,
+        prompt,
+        { temperature: 0.15, maxTokens: 1600 }
+    );
+    if (deepseekResult) return deepseekResult;
+
+    const geminiResult = await callGemini(CaseAnalysisResponseSchema, system, prompt);
+    if (geminiResult) return geminiResult;
+
+    throw new Error('Case analysis failed with all providers.');
+}
+
+export async function explainSupportResult(input: {
+    jurisdiction: string;
+    calculatedAmount: number;
+    inputsSummary: string;
+}): Promise<SupportExplanationResponse> {
+    if (!deepseekClient && !geminiClient) {
+        throw new Error('No AI clients configured. Set VITE_DEEPSEEK_API_KEY or VITE_GEMINI_API_KEY.');
+    }
+
+    const systemPrompt = `You are CustodyBuddy Support Explainer. The child/spousal support AMOUNT has already been calculated by a separate guideline calculator.
+
+Your role:
+- Explain in plain language why this amount makes sense based on the inputs.
+- Highlight key factors driving the result (income, parenting time, number/ages of children, special expenses).
+- Flag any common edge cases where the user should get legal advice or check local guidelines.
+- Suggest neutral "documentationTips" (what to keep records of) without giving legal advice.
+
+STRICT RULES:
+- Do NOT recalculate support amounts.
+- Do NOT say what should be paid—just explain the already-calculated result.
+- Do NOT tell the user what motion or form to file.
+- Be neutral, trauma-informed, and non-judgmental.
+
+Return ONLY valid JSON shaped exactly as:
+{
+  "plainLanguageSummary": "string",
+  "keyFactors": ["string"],
+  "edgeCases": ["string"],
+  "documentationTips": ["string"]
+}`;
+
+    const userContent = `Jurisdiction: ${input.jurisdiction}
+
+Calculated support amount (already computed by a guideline calculator):
+${input.calculatedAmount}
+
+Calculator inputs (summary):
+${input.inputsSummary}`.trim();
+
+    const deepseekResult = await callDeepseek(
+        SupportExplanationResponse,
+        systemPrompt,
+        userContent,
+        { temperature: 0.15, maxTokens: 900 }
+    );
+    if (deepseekResult) return deepseekResult;
+
+    const geminiResult = await callGemini(SupportExplanationResponse, systemPrompt, userContent);
+    if (geminiResult) return geminiResult;
+
+    throw new Error('Support explanation failed with all providers.');
 }

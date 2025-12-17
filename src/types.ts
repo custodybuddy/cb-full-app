@@ -43,20 +43,20 @@ export interface CalculationResult {
 }
 
 export const DEFAULT_INPUTS: CalculatorInputs = {
-    payorIncome: '',
-    recipientIncome: '',
-    recipientAge: '',
-    jurisdiction: '',
-    numChildren: '0',
-    childAges: [],
-    parentingType: 'primary',
+    payorIncome: '95000',
+    recipientIncome: '55000',
+    recipientAge: '42',
+    jurisdiction: 'Ontario',
+    numChildren: '2',
+    childAges: ['6', '9'],
+    parentingType: 'shared',
     payorParentingTime: '50',
     recipientParentingTime: '50',
     sharedPercentage: '50',
-    specialExpenseChildcare: '',
-    specialExpenseEducation: '',
-    specialExpenseHealth: '',
+    specialExpenseChildcare: '350',
+    specialExpenseEducation: '80',
+    specialExpenseHealth: '120',
     dateOfCohabitation: '',
     dateOfMarriage: '',
-    dateOfSeparation: ''
+    dateOfSeparation: '',
 };

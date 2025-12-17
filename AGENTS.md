@@ -2,8 +2,8 @@
 
 ## Project Structure & Module Organization
 - `src/` holds the React + TypeScript app (entry: `src/index.tsx`, shell: `src/App.tsx`).
-- UI is split into shared pieces in `src/components/` and feature-owned code in `src/features/` (pages live in `src/features/*/pages`).
-- Legal references live in `src/domain/legalRefs/` (`data.ts` for mappings, `utils.ts` for parsing helpers).
+- Shared UI lives in `src/components/`; feature pages/tools (incident report, email buddy, case analysis, support calculator) live in `src/features/*` with their own hooks and `pages/`.
+- Legal references remain in `src/domain/legalRefs/` (`data.ts` for mappings, `utils.ts` for parsing helpers) and memoized data/constants sit alongside their feature modules.
 - Static assets go in `public/`. Build output lands in `dist/`. Tests live in `tests/`.
 - Domain data tables remain in `src/data/` (e.g., jurisdictions, calculator baselines).
 
@@ -17,8 +17,8 @@
 
 ## Coding Style & Naming Conventions
 - TypeScript + React (ES modules). Use 4-space indentation and single quotes; keep semicolons consistent with existing files.
-- Components use PascalCase filenames (`src/components/Header.tsx`), hooks use `useX` naming, and feature folders use kebab-case (`src/features/case-analysis/`).
-- Use the `@/` alias for `src/` imports when convenient.
+- Components use PascalCase filenames (`src/components/Header.tsx`), hooks use `useX` naming (e.g., `useIncidentAnalysis`, `useEmailBuddy`, `useCaseAnalysis`), and feature folders use kebab-case (`src/features/case-analysis/`).
+- Use the `@/` alias for `src/` imports when convenient, and memoize shared strings/options in module-level constants rather than inline literals.
 
 ## Testing Guidelines
 - Test runner: Vitest; UI tests use Testing Library where applicable.
@@ -31,3 +31,4 @@
 
 ## Configuration Notes
 - Vite env vars must be prefixed with `VITE_`. Do not commit secrets; use local `.env` files.
+- LLM-powered features (`analyzeIncident`, `analyzeEmailBuddy`, `analyzeCaseDocuments`) run client-side for dev/testing; rotate keys and proxy through a server for production.
