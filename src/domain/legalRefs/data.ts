@@ -4,7 +4,7 @@ import {
   getJurisdictionMetadata,
   normalizeJurisdiction,
   type JurisdictionMetadata,
-} from './jurisdictions';
+} from '@/data/jurisdictions';
 
 export const SITE_LINKS = {
   home: 'https://custodybuddy.com/',

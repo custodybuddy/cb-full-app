@@ -1,8 +1,5 @@
 import React, { createContext, useState, useCallback, ReactNode, useMemo } from 'react';
-import { analyzeCaseDocuments, prepareContentParts } from '../services/ai/caseAnalysisService';
-import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { CaseAnalysisReport } from '../types/ai';
-import { validateCaseAnalysisForm } from '@/validation/forms';
 
 // Re-export type for convenience
 export type { CaseAnalysisReport };
@@ -40,26 +37,9 @@ export const CaseAnalysisProvider: React.FC<{ children: ReactNode }> = ({ childr
     const [analysisResponse, setAnalysisResponse] = useState<CaseAnalysisReport | null>(null);
 
     const handleAnalysis = useCallback(async () => {
-        const validation = validateCaseAnalysisForm(files, pastedText, jurisdiction);
-        if (!validation.isValid) {
-            setError(validation.error);
-            return;
-        }
-
-        setIsLoading(true);
         setError(null);
         setAnalysisResponse(null);
-
-        try {
-            const contentParts = await prepareContentParts(files, pastedText);
-            const result = await analyzeCaseDocuments(contentParts, jurisdiction);
-            setAnalysisResponse(result);
-        } catch (err: unknown) {
-            setError(getFriendlyErrorMessage(err, 'document analysis'));
-        } finally {
-            setIsLoading(false);
-        }
-    }, [files, pastedText, jurisdiction]);
+    }, []);
 
     const reset = useCallback(() => {
         setFiles([]);

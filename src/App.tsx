@@ -9,7 +9,6 @@ import { useConsent } from '@/hooks/useConsent';
 import ConsentModal from '@/components/ConsentModal';
 import SpinnerIcon from '@/components/icons/SpinnerIcon';
 import TopLoadingBar from '@/components/TopLoadingBar';
-import { isOpenAIConfigured } from '@/utils/envUtils';
 
 const PageFallback: React.FC = () => (
     <div className="flex justify-center items-center min-h-screen">
@@ -27,7 +26,6 @@ const PageFallback: React.FC = () => (
 
 
 const App: React.FC = () => {
-    const apiKeyConfigured = isOpenAIConfigured();
     const location = useLocation();
     const { consentGiven, acceptConsent } = useConsent();
 
@@ -49,27 +47,6 @@ const App: React.FC = () => {
             .filter(l => l.inFooter)
             .map(l => ({ href: l.href, text: l.text, isExternal: true }))
     ];
-
-    if (!apiKeyConfigured) {
-        return (
-            <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center p-6">
-                <div className="max-w-xl text-center space-y-4">
-                    <div className="text-2xl font-black">
-                        <span className="text-amber-400">CUSTODY</span>
-                        <span>BUDDY</span>
-                        <span className="text-amber-400">.COM</span>
-                    </div>
-                    <p className="text-lg text-amber-300 font-semibold">AI service is not configured.</p>
-                    <p className="text-sm text-gray-300">
-                        Please set the <code className="font-mono text-amber-200">OPENAI_API_KEY</code> (or <code className="font-mono text-amber-200">VITE_OPENAI_API_KEY</code>) environment variable and reload the page.
-                    </p>
-                    <p className="text-xs text-gray-400">
-                        This app runs client-side only; your API key is required to call OpenAI for document analysis and drafting tools.
-                    </p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <ModalProvider>

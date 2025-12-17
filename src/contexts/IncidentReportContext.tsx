@@ -1,8 +1,5 @@
 import React, { createContext, useState, useCallback, ReactNode, useMemo } from 'react';
-import { generateIncidentReport } from '../services/ai/incidentReportService';
-import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { IncidentReport, IncidentData, IncidentCategory } from '../types/ai';
-import { validateIncidentData } from '@/validation/forms';
 
 export type { IncidentReport, IncidentData, IncidentCategory };
 
@@ -44,24 +41,8 @@ export const IncidentReportProvider: React.FC<{ children: ReactNode }> = ({ chil
 
     const handleGenerateReport = useCallback(async () => {
         setError(null);
-        const validation = validateIncidentData(incidentData);
-        if (!validation.isValid) {
-            setError(validation.errors);
-            return;
-        }
-
-        setIsLoading(true);
         setReportResponse(null);
-
-        try {
-            const result = await generateIncidentReport(incidentData);
-            setReportResponse(result);
-        } catch (err: unknown) {
-            setError(getFriendlyErrorMessage(err, 'incident report generation'));
-        } finally {
-            setIsLoading(false);
-        }
-    }, [incidentData]);
+    }, []);
 
     const reset = useCallback(() => {
         setIncidentData(initialIncidentData);

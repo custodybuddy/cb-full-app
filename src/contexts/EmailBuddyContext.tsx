@@ -1,8 +1,5 @@
 import React, { createContext, useState, useCallback, ReactNode, useMemo } from 'react';
-import { analyzeAndDraftEmailResponses } from '../services/ai/emailBuddyService';
-import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { EmailBuddyResponse, ToneOption } from '../types/ai';
-import { validateEmailBuddyInput } from '@/validation/forms';
 
 // Re-export type for convenience
 export type { EmailBuddyResponse, ToneOption };
@@ -48,35 +45,14 @@ export const EmailBuddyProvider: React.FC<{ children: ReactNode }> = ({ children
     }, []);
 
     const handleGenerateResponses = useCallback(async () => {
-        let emailToAnalyze = '';
-
-        setState(s => {
-            const validation = validateEmailBuddyInput(s.receivedEmail);
-            if (!validation.isValid) {
-                return { ...s, error: validation.error };
-            }
-            emailToAnalyze = s.receivedEmail;
-            return { ...s, isLoading: true, error: null, response: null };
-        });
-
-        if (!emailToAnalyze) {
-            return;
-        }
-
-        try {
-            const result = await analyzeAndDraftEmailResponses(emailToAnalyze);
-            setState(s => ({ ...s, response: result, isLoading: false }));
-        } catch (err: unknown) {
-            setState(s => ({ ...s, error: getFriendlyErrorMessage(err, 'email analysis and drafting'), isLoading: false }));
-        }
+        setState(s => ({ ...s, error: null, response: null, isLoading: false }));
     }, []);
 
 
     const showExample = useCallback((exampleData: { email: string; response: EmailBuddyResponse }) => {
         setState({ 
             ...initialState, 
-            receivedEmail: exampleData.email, 
-            response: exampleData.response,
+            receivedEmail: exampleData.email,
         });
     }, []);
 

@@ -1,6 +1,4 @@
 import React, { createContext, useState, useCallback, ReactNode, useMemo } from 'react';
-import { draftFalseAllegationResponse } from '../services/ai/falseAllegationService';
-import { getFriendlyErrorMessage } from '../utils/errorUtils';
 import { FalseAllegationResponse } from '../types/ai';
 import { v4 as uuidv4 } from 'uuid'; // For unique IDs
 
@@ -99,27 +97,8 @@ export const FalseAllegationProvider: React.FC<{ children: ReactNode }> = ({ chi
     }, []);
 
     const handleDraftResponse = useCallback(async () => {
-        if (state.allegations.length === 0) {
-            setError('Please provide at least one allegation to get started.');
-            return;
-        }
-
-        // Ensure all allegations have a category and evidence
-        const incompleteAllegations = state.allegations.filter(a => !a.category || !a.evidence.trim());
-        if (incompleteAllegations.length > 0) {
-            setError('Please ensure all allegations have a category and associated evidence before proceeding.');
-            return;
-        }
-
-        setState(s => ({ ...s, isLoading: true, error: null, response: null }));
-        try {
-            // Pass allegations array directly to the service
-            const result = await draftFalseAllegationResponse(state.allegations); // Removed global evidence
-            setState(s => ({ ...s, response: result, isLoading: false }));
-        } catch (err: unknown) {
-            setState(s => ({ ...s, error: getFriendlyErrorMessage(err, 'false allegation response drafting'), isLoading: false }));
-        }
-    }, [state.allegations]); // Dependencies for state values
+        setState(s => ({ ...s, isLoading: false, error: null, response: null }));
+    }, []);
 
     const reset = useCallback(() => setState(initialState), []);
 

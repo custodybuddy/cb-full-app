@@ -19,6 +19,6 @@ export {
     RESOURCE_LINKS,
     getStatutesForJurisdiction,
     JURISDICTION_NAMES,
-} from '../data/legalReferences';
+} from '../domain/legalRefs';
 
 export { JURISDICTIONS, getJurisdictionMetadata, normalizeJurisdiction } from '../data/jurisdictions';

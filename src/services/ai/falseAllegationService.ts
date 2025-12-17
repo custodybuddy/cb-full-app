@@ -1,17 +1,16 @@
-import { falseAllegationResponseSystemPrompt } from '@/prompts';
-import { generateAndParseJson } from './responses';
-import { FalseAllegationResponse } from '@/types/ai';
-import { AllegationItem } from '@/contexts/FalseAllegationContext'; // Import AllegationItem
+import type { FalseAllegationResponse } from '@/types/ai';
 
-export const draftFalseAllegationResponse = (allegations: AllegationItem[]): Promise<FalseAllegationResponse> => {
-    const formattedAllegationsAndEvidence = allegations.map(a =>
-        `• Allegation (${a.category === 'Other' ? a.otherCategoryText : a.category || 'Uncategorized'}): ${a.text}\n  Evidence: ${a.evidence || 'Not provided'}`
-    ).join('\n');
+export interface FalseAllegationInput {
+    text: string;
+    category: string;
+    evidence: string;
+    otherCategoryText?: string;
+}
 
-    const userPrompt = `Allegations and Evidence:\n${formattedAllegationsAndEvidence}`;
-
-    return generateAndParseJson<FalseAllegationResponse>({
-        systemInstruction: falseAllegationResponseSystemPrompt,
-        userPrompt: userPrompt,
-    });
-};
+export const draftFalseAllegationResponse = async (
+    _allegations: FalseAllegationInput[]
+): Promise<FalseAllegationResponse> => ({
+    // TODO(custodybuddy): Replace with real drafting output.
+    rebuttals: [],
+    suggested_overall_next_steps: 'Placeholder next steps. Add real guidance output here.',
+});
