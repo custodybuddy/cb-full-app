@@ -1,5 +1,22 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { useIncidentAnalysis } from './useIncidentAnalysis';
+import type { ReactNode } from 'react';
+
+const JURISDICTIONS = [
+    'Ontario',
+    'British Columbia',
+    'Alberta',
+    'California',
+    'Texas',
+    'New York',
+] as const;
+
+const INTRO_LINES: ReactNode = (
+    <>
+        Capture the facts, context, and tone in one place. CustodyBuddy formats your narrative
+        into objective documentation with clear action steps.
+    </>
+);
 
 const IncidentReportPage = () => {
     const [date, setDate] = useState('');
@@ -16,6 +33,8 @@ const IncidentReportPage = () => {
         await runAnalysis({ date, time, location, parties, jurisdiction, narrative });
     };
 
+    const jurisdictionOptions = useMemo(() => JURISDICTIONS, []);
+
     return (
         <div className="min-h-screen bg-slate-950 text-white pt-28 md:pt-32">
             <div className="mx-auto flex max-w-[1120px] flex-col gap-10 px-4 pb-12">
@@ -28,9 +47,7 @@ const IncidentReportPage = () => {
                         <span className="text-amber-400">court-ready</span> incident reports.
                     </h1>
                     <p className="mx-auto text-center max-w-2xl text-sm text-slate-300 md:text-base">
-                        Capture the facts, context, and tone in one place. CustodyBuddy
-                        formats your narrative into objective documentation with clear
-                        action steps.
+                        {INTRO_LINES}
                     </p>
                 </header>
 
@@ -101,12 +118,11 @@ const IncidentReportPage = () => {
                                 onChange={event => setJurisdiction(event.target.value)}
                                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
                             >
-                                <option>Ontario</option>
-                                <option>British Columbia</option>
-                                <option>Alberta</option>
-                                <option>California</option>
-                                <option>Texas</option>
-                                <option>New York</option>
+                                {jurisdictionOptions.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 

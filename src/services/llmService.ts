@@ -37,25 +37,77 @@ export const CustodyAIResponse = z.object({
 export type CustodyAIResponse = z.infer<typeof CustodyAIResponse>;
 
 export const EmailBuddyResponseSchema = z.object({
-    analysis: z.object({
-        tone: z.string(),
-        summary: z.string(),
-        key_demands: z.array(z.string()),
-        legal_jargon: z.array(
-            z.object({
-                term: z.string(),
-                context: z.string(),
-            })
-        ),
-    }),
-    drafts: z.object({
-        biff: z.string(),
-        greyRock: z.string(),
-        friendlyAssertive: z.string(),
-    }),
+    originalTone: z.string(),
+    keyDemands: z.array(z.string()),
+    riskFlags: z.array(z.string()),
+    biffReply: z.string(),
+    greyRockReply: z.string(),
+    notesForCourt: z.array(z.string()),
 });
 
 export type EmailBuddyResponse = z.infer<typeof EmailBuddyResponseSchema>;
+
+const parseJson = (content: string | null | undefined) => {
+    if (!content) return null;
+    try {
+        return JSON.parse(content);
+    } catch {
+        return null;
+    }
+};
+
+async function callDeepseek<T>(
+    schema: z.ZodSchema<T>,
+    systemPrompt: string,
+    userPrompt: string,
+    {
+        temperature = 0.1,
+        maxTokens = 800,
+    }: { temperature?: number; maxTokens?: number } = {}
+): Promise<T | null> {
+    if (!deepseekClient) return null;
+
+    try {
+        const response = await deepseekClient.chat.completions.create({
+            model: 'deepseek-chat',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt },
+            ],
+            response_format: { type: 'json_object' },
+            temperature,
+            max_tokens: maxTokens,
+            tools: [],
+            tool_choice: 'none',
+        });
+
+        const parsed = schema.safeParse(parseJson(response.choices[0].message.content));
+        if (parsed.success) return parsed.data;
+    } catch (error) {
+        console.warn('DeepSeek failed:', error);
+    }
+
+    return null;
+}
+
+async function callGemini<T>(
+    schema: z.ZodSchema<T>,
+    systemPrompt: string,
+    userPrompt: string
+): Promise<T | null> {
+    if (!geminiClient) return null;
+
+    try {
+        const model = geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const result = await model.generateContent([systemPrompt, userPrompt]);
+        const parsed = schema.safeParse(parseJson(result.response.text()));
+        if (parsed.success) return parsed.data;
+    } catch (error) {
+        console.warn('Gemini failed:', error);
+    }
+
+    return null;
+}
 
 export async function analyzeIncident(
     narrative: string,
@@ -71,90 +123,69 @@ export async function analyzeIncident(
   "legalNotes": ["Legal note 1", "Legal note 2"]
 }`;
 
-    if (deepseekClient) {
-        try {
-            const response = await deepseekClient.chat.completions.create({
-                model: 'deepseek-chat',
-                messages: [
-                    { role: 'system', content: system },
-                    { role: 'user', content: prompt },
-                ],
-                response_format: { type: 'json_object' },
-                temperature: 0.1,
-                max_tokens: 800,
-                tools: [],
-                tool_choice: 'none',
-            });
+    const deepseekResult = await callDeepseek(
+        CustodyAIResponse,
+        system,
+        prompt,
+        { temperature: 0.1, maxTokens: 800 }
+    );
+    if (deepseekResult) return deepseekResult;
 
-            const parsed = CustodyAIResponse.safeParse(
-                JSON.parse(response.choices[0].message.content || '{}')
-            );
-            if (parsed.success) return parsed.data;
-        } catch (error) {
-            console.warn('DeepSeek failed:', error);
-        }
-    }
-
-    if (geminiClient) {
-        try {
-            const model = geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
-            const result = await model.generateContent([system, prompt]);
-
-            const parsed = CustodyAIResponse.safeParse(
-                JSON.parse(result.response.text())
-            );
-            if (parsed.success) return parsed.data;
-        } catch (error) {
-            console.warn('Gemini failed:', error);
-        }
-    }
+    const geminiResult = await callGemini(CustodyAIResponse, system, prompt);
+    if (geminiResult) return geminiResult;
 
     throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
 }
 
-export async function analyzeEmail(
-    emailText: string
-): Promise<EmailBuddyResponse> {
-    const prompt = `Analyze this co-parenting email and draft responses:\\n\\n${emailText}`;
-    const system = `You are CustodyBuddy AI. Respond ONLY in valid JSON matching this exact schema. NO markdown, NO extra text, NO tools:\n\n{\n  \"analysis\": {\n    \"tone\": \"Short tone description\",\n    \"summary\": \"2-3 sentence summary\",\n    \"key_demands\": [\"Key demand or question\"],\n    \"legal_jargon\": [{\"term\": \"Legal term\", \"context\": \"Where it appears\"}]\n  },\n  \"drafts\": {\n    \"biff\": \"Brief, Informative, Friendly, Firm draft\",\n    \"greyRock\": \"Grey Rock draft\",\n    \"friendlyAssertive\": \"Friendly assertive draft\"\n  }\n}`;
-
-    if (deepseekClient) {
-        try {
-            const response = await deepseekClient.chat.completions.create({
-                model: 'deepseek-chat',
-                messages: [
-                    { role: 'system', content: system },
-                    { role: 'user', content: prompt },
-                ],
-                response_format: { type: 'json_object' },
-                temperature: 0.2,
-                max_tokens: 1200,
-                tools: [],
-                tool_choice: 'none',
-            });
-
-            const parsed = EmailBuddyResponseSchema.safeParse(
-                JSON.parse(response.choices[0].message.content || '{}')
-            );
-            if (parsed.success) return parsed.data;
-        } catch (error) {
-            console.warn('DeepSeek failed:', error);
-        }
+export async function analyzeEmailBuddy(input: {
+    rawEmail: string;
+    jurisdiction: string;
+}): Promise<EmailBuddyResponse> {
+    if (!deepseekClient && !geminiClient) {
+        throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
     }
 
-    if (geminiClient) {
-        try {
-            const model = geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
-            const result = await model.generateContent([system, prompt]);
+    const system = `You are CustodyBuddy Email Law Buddy, helping self-represented parents in high-conflict co-parenting.
 
-            const parsed = EmailBuddyResponseSchema.safeParse(
-                JSON.parse(result.response.text())
-            );
-            if (parsed.success) return parsed.data;
-        } catch (error) {
-            console.warn('Gemini failed:', error);
-        }
-    }
+Task:
+- Analyze the OTHER parent's email.
+- Identify tone, key demands, and any red flags (threats, gaslighting, boundary violations).
+- Draft TWO responses:
+  - "biffReply": Brief, Informative, Friendly, Firm.
+  - "greyRockReply": Minimal emotional engagement; neutral and concise.
+- Add "notesForCourt": how this email and your reply might be perceived by a family court judge in the given jurisdiction.
 
-    throw new Error('No working AI clients. Check VITE_DEEPSEEK_API_KEY');
+CRITICAL:
+- Do NOT give legal advice.
+- Do NOT tell the user what to file or which motion to bring.
+- Focus on communication hygiene and documentation.
+- Be trauma-informed and non-judgmental.
+
+Respond ONLY as valid JSON in this exact shape:
+{
+  "originalTone": "string",
+  "keyDemands": ["string"],
+  "riskFlags": ["string"],
+  "biffReply": "string",
+  "greyRockReply": "string",
+  "notesForCourt": ["string"]
+}`;
+
+    const prompt = `Jurisdiction: ${input.jurisdiction}
+
+Other parent's email:
+${input.rawEmail}`.trim();
+
+    const deepseekResult = await callDeepseek(
+        EmailBuddyResponseSchema,
+        system,
+        prompt,
+        { temperature: 0.2, maxTokens: 1200 }
+    );
+    if (deepseekResult) return deepseekResult;
+
+    const geminiResult = await callGemini(EmailBuddyResponseSchema, system, prompt);
+    if (geminiResult) return geminiResult;
+
+    throw new Error('Email Buddy analysis failed with all providers.');
 }

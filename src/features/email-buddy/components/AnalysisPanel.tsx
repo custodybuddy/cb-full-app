@@ -1,55 +1,46 @@
 import React from 'react';
-import { EmailAnalysis } from '@/types/ai';
-import JargonHelper from './JargonHelper';
 import SparklesIcon from '@/components/icons/SparklesIcon';
 
 interface AnalysisPanelProps {
-    analysis: EmailAnalysis;
+    originalTone: string;
+    keyDemands: string[];
+    riskFlags: string[];
 }
 
-const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ analysis }) => {
+const AnalysisPanel: React.FC<AnalysisPanelProps> = ({ originalTone, keyDemands, riskFlags }) => {
     return (
-        <aside className="flex-shrink-0 bg-slate-900 border border-slate-700 rounded-lg w-full lg:w-80 p-4">
+        <aside className="flex-shrink-0 bg-slate-900 border border-slate-700 rounded-lg w-full lg:w-80 p-4 space-y-4">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2">
                     <SparklesIcon />
                     AI Analysis
                 </h3>
-                <button
-                    className="text-gray-400 transition-transform duration-300"
-                    aria-label="Collapse analysis panel"
-                    aria-expanded="true"
-                    disabled
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
             </div>
-            <div className="mt-4">
-                <div className="text-sm space-y-4">
-                    <div>
-                        <strong className="font-semibold text-gray-300 block mb-1">Identified Tone:</strong>
-                        <span className="text-gray-300 bg-slate-800 px-2 py-1 rounded-md inline-block">{analysis.tone}</span>
-                    </div>
-                    <div>
-                        <strong className="font-semibold text-gray-300 block mb-1">Summary:</strong>
-                        <p className="text-gray-400 italic">"{analysis.summary}"</p>
-                    </div>
-                    {analysis.key_demands && analysis.key_demands.length > 0 && (
-                        <div>
-                            <strong className="font-semibold text-gray-300 block mb-1">Key Demands & Questions:</strong>
-                            <ul className="list-disc pl-5 space-y-1 text-gray-400">
-                                {analysis.key_demands.map((demand, index) => (
-                                    <li key={index}>{demand}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
+            <div className="text-sm space-y-4">
+                <div>
+                    <strong className="font-semibold text-gray-300 block mb-1">Identified Tone</strong>
+                    <span className="text-gray-300 bg-slate-800 px-2 py-1 rounded-md inline-block">
+                        {originalTone}
+                    </span>
                 </div>
-                {analysis.legal_jargon && analysis.legal_jargon.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-slate-700">
-                        <JargonHelper jargon={analysis.legal_jargon} />
+                {keyDemands.length > 0 && (
+                    <div>
+                        <strong className="font-semibold text-gray-300 block mb-1">Key Demands</strong>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-400">
+                            {keyDemands.map((demand, index) => (
+                                <li key={index}>{demand}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                {riskFlags.length > 0 && (
+                    <div>
+                        <strong className="font-semibold text-gray-300 block mb-1">Risk Flags</strong>
+                        <ul className="list-disc pl-5 space-y-1 text-gray-400">
+                            {riskFlags.map((flag, index) => (
+                                <li key={index}>{flag}</li>
+                            ))}
+                        </ul>
                     </div>
                 )}
             </div>

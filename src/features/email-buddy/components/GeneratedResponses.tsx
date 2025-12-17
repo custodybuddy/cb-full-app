@@ -2,7 +2,6 @@ import React from 'react';
 import RotateCwIcon from '@/components/icons/RotateCwIcon';
 import AnalysisPanel from './AnalysisPanel';
 import DraftDisplay from './DraftDisplay';
-import AlternativeDraftsPanel from './AlternativeDraftsPanel';
 import type { EmailBuddyResponse } from '@/types/ai';
 
 interface GeneratedResponsesProps {
@@ -34,24 +33,34 @@ const GeneratedResponses: React.FC<GeneratedResponsesProps> = ({
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4">
-            <AnalysisPanel analysis={response.analysis} />
+            <AnalysisPanel
+                originalTone={response.originalTone}
+                keyDemands={response.keyDemands}
+                riskFlags={response.riskFlags}
+            />
 
-            <div className="flex-grow grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="bg-slate-900 border border-amber-400/50 rounded-lg p-4 flex flex-col shadow-lg">
-                    <DraftDisplay
-                        title="Primary Recommendation: BIFF"
-                        draft={response.drafts.biff}
-                    />
+                    <DraftDisplay title="BIFF Reply" draft={response.biffReply} />
                 </div>
 
-                <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 flex flex-col">
-                    <AlternativeDraftsPanel drafts={{
-                        "Grey Rock": response.drafts.greyRock,
-                        "Friendly Assertive": response.drafts.friendlyAssertive,
-                    }} />
+                <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 flex flex-col shadow-lg">
+                    <DraftDisplay title="Grey Rock Reply" draft={response.greyRockReply} />
                 </div>
             </div>
         </div>
+        {response.notesForCourt.length > 0 && (
+            <div className="mt-4 rounded-lg border border-slate-700 bg-slate-900/60 p-4">
+                <h4 className="text-sm font-semibold text-slate-100 mb-2">
+                    Notes for Court
+                </h4>
+                <ul className="list-disc list-inside space-y-1 text-slate-200 text-sm">
+                    {response.notesForCourt.map((note, index) => (
+                        <li key={index}>{note}</li>
+                    ))}
+                </ul>
+            </div>
+        )}
         <p className="text-xs text-gray-500 italic mt-4">{disclaimer}</p>
     </div>
 );

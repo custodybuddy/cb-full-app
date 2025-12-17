@@ -14,22 +14,13 @@ export interface JargonItem {
   context: string;
 }
 
-export interface EmailAnalysis {
-    tone: string;
-    summary: string;
-    key_demands: string[];
-    legal_jargon: JargonItem[];
-}
-  
-export interface EmailDrafts {
-    biff: string;
-    greyRock: string;
-    friendlyAssertive: string;
-}
-  
 export interface EmailBuddyResponse {
-    analysis: EmailAnalysis;
-    drafts: EmailDrafts;
+    originalTone: string;
+    keyDemands: string[];
+    riskFlags: string[];
+    biffReply: string;
+    greyRockReply: string;
+    notesForCourt: string[];
 }
 
 export interface CaseAnalysisReport {

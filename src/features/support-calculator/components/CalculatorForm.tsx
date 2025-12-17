@@ -1,5 +1,21 @@
 import React from 'react';
 
+const DEFAULT_FORM_VALUES = {
+    payorIncome: 95000,
+    recipientIncome: 55000,
+    recipientAge: 42,
+    numChildren: 2,
+    childAges: [6, 9],
+    parentingTime: { payor: 50, recipient: 50 },
+    section7: {
+        childcare: 350,
+        medical: 120,
+        school: 80,
+    },
+} as const;
+
+const PARENTING_ARRANGEMENT = 'Shared Parenting (40-60%)';
+
 const CalculatorForm: React.FC = () => {
     return (
         <form className="space-y-6">
@@ -14,7 +30,7 @@ const CalculatorForm: React.FC = () => {
                             id="payorIncome"
                             type="number"
                             className="w-full bg-transparent py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                            defaultValue="95000"
+                            defaultValue={DEFAULT_FORM_VALUES.payorIncome}
                             readOnly
                         />
                     </div>
@@ -30,7 +46,7 @@ const CalculatorForm: React.FC = () => {
                             id="recipientIncome"
                             type="number"
                             className="w-full bg-transparent py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                            defaultValue="55000"
+                            defaultValue={DEFAULT_FORM_VALUES.recipientIncome}
                             readOnly
                         />
                     </div>
@@ -40,26 +56,26 @@ const CalculatorForm: React.FC = () => {
                     <label className="text-sm font-semibold text-slate-200 mb-1 block" htmlFor="recipientAge">
                         Recipient Age
                     </label>
-                    <input
-                        id="recipientAge"
-                        type="number"
-                        className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                        defaultValue="42"
-                        readOnly
-                    />
+                        <input
+                            id="recipientAge"
+                            type="number"
+                            className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
+                            defaultValue={DEFAULT_FORM_VALUES.recipientAge}
+                            readOnly
+                        />
                 </div>
 
                 <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
                     <label className="text-sm font-semibold text-slate-200 mb-1 block" htmlFor="numChildren">
                         Number of Children
                     </label>
-                    <input
-                        id="numChildren"
-                        type="number"
-                        className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                        defaultValue="2"
-                        readOnly
-                    />
+                        <input
+                            id="numChildren"
+                            type="number"
+                            className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
+                            defaultValue={DEFAULT_FORM_VALUES.numChildren}
+                            readOnly
+                        />
                 </div>
             </div>
 
@@ -69,13 +85,13 @@ const CalculatorForm: React.FC = () => {
                     <input
                         type="number"
                         className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                        defaultValue="6"
+                        defaultValue={DEFAULT_FORM_VALUES.childAges[0]}
                         readOnly
                     />
                     <input
                         type="number"
                         className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white placeholder:text-slate-500 focus:outline-none"
-                        defaultValue="9"
+                        defaultValue={DEFAULT_FORM_VALUES.childAges[1]}
                         readOnly
                     />
                 </div>
@@ -83,7 +99,7 @@ const CalculatorForm: React.FC = () => {
                     <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-800">
                         <label className="text-xs text-slate-400 mb-1 block">Parenting Arrangement</label>
                         <select className="w-full bg-slate-900/70 rounded-lg px-3 py-2 text-white" disabled>
-                            <option>Shared Parenting (40-60%)</option>
+                            <option>{PARENTING_ARRANGEMENT}</option>
                         </select>
                     </div>
                     <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-800">
@@ -92,13 +108,13 @@ const CalculatorForm: React.FC = () => {
                             <input
                                 type="number"
                                 className="w-full bg-slate-900/70 rounded-lg px-3 py-2 text-white"
-                                defaultValue="50"
+                                defaultValue={DEFAULT_FORM_VALUES.parentingTime.payor}
                                 readOnly
                             />
                             <input
                                 type="number"
                                 className="w-full bg-slate-900/70 rounded-lg px-3 py-2 text-white"
-                                defaultValue="50"
+                                defaultValue={DEFAULT_FORM_VALUES.parentingTime.recipient}
                                 readOnly
                             />
                         </div>
@@ -113,21 +129,21 @@ const CalculatorForm: React.FC = () => {
                         type="number"
                         className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white"
                         placeholder="Childcare"
-                        defaultValue="350"
+                        defaultValue={DEFAULT_FORM_VALUES.section7.childcare}
                         readOnly
                     />
                     <input
                         type="number"
                         className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white"
                         placeholder="Medical"
-                        defaultValue="120"
+                        defaultValue={DEFAULT_FORM_VALUES.section7.medical}
                         readOnly
                     />
                     <input
                         type="number"
                         className="w-full bg-slate-800/70 rounded-lg px-3 py-2 text-white"
                         placeholder="School"
-                        defaultValue="80"
+                        defaultValue={DEFAULT_FORM_VALUES.section7.school}
                         readOnly
                     />
                 </div>

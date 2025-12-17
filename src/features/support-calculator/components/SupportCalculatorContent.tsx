@@ -4,6 +4,18 @@ import { useSupportCalculator } from '../useSupportCalculator';
 import CalculatorForm from './CalculatorForm';
 import ResultsDisplay from './ResultsDisplay';
 
+const LAYOUT_CLASSNAMES = {
+    page: 'bg-slate-950 text-slate-100 p-4 md:p-8 rounded-3xl max-w-6xl mx-auto space-y-6 shadow-2xl shadow-amber-500/5 border border-slate-800/60',
+    modal: 'bg-slate-950 text-slate-100 p-4 md:p-6 rounded-3xl max-w-5xl mx-auto space-y-6 shadow-2xl shadow-amber-500/5 border border-slate-800/60',
+} as const;
+
+const HEADER_COPY = {
+    badge: 'SupportCalc CA',
+    title: 'Spousal & Child Support Estimator',
+    description:
+        'Uses simplified SSAG-inspired spousal ranges and child support set-off estimates. For guidance only; confirm figures with a family law professional.',
+};
+
 interface SupportCalculatorContentProps {
     layout?: 'page' | 'modal';
 }
@@ -14,10 +26,7 @@ const SupportCalculatorContent: React.FC<SupportCalculatorContentProps> = ({ lay
 
     const { inputs, results, errors, handleInputChange, handleChildAgeChange, handleCalculate } = useSupportCalculator();
 
-    const containerClasses =
-        layout === 'page'
-            ? 'bg-slate-950 text-slate-100 p-4 md:p-8 rounded-3xl max-w-6xl mx-auto space-y-6 shadow-2xl shadow-amber-500/5 border border-slate-800/60'
-            : 'bg-slate-950 text-slate-100 p-4 md:p-6 rounded-3xl max-w-5xl mx-auto space-y-6 shadow-2xl shadow-amber-500/5 border border-slate-800/60';
+    const containerClasses = LAYOUT_CLASSNAMES[layout];
 
     return (
         <section className={containerClasses} aria-labelledby={titleId} aria-describedby={descId}>
@@ -26,16 +35,17 @@ const SupportCalculatorContent: React.FC<SupportCalculatorContentProps> = ({ lay
                     <Calculator className="w-8 h-8 md:w-9 md:h-9 text-slate-950" />
                 </div>
                 <div className="space-y-2">
-                    <p className="text-[11px] uppercase tracking-[0.28em] text-yellow-200 font-semibold">SupportCalc CA</p>
+                    <p className="text-[11px] uppercase tracking-[0.28em] text-yellow-200 font-semibold">
+                        {HEADER_COPY.badge}
+                    </p>
                     <h2 id={titleId} className="text-2xl md:text-3xl font-bold text-white tracking-tight font-serif">
-                        Spousal & Child Support Estimator
+                        {HEADER_COPY.title}
                     </h2>
                     <p
                         id={descId}
                         className="text-slate-200/90 text-sm md:text-base font-medium leading-relaxed max-w-3xl mx-auto"
                     >
-                        Uses simplified SSAG-inspired spousal ranges and child support set-off estimates. For guidance only;
-                        confirm figures with a family law professional.
+                        {HEADER_COPY.description}
                     </p>
                 </div>
             </header>

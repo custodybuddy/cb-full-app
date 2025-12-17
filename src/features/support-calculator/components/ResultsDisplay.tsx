@@ -3,12 +3,32 @@ import HelpCircleIcon from '@/components/icons/HelpCircleIcon';
 
 const formatCurrency = (value: number) => `$${value.toLocaleString('en-CA')}`;
 
+const SAMPLE_RESULTS = {
+    childSupport: 820,
+    spousalSupportLow: 950,
+    spousalSupportHigh: 1450,
+    spousalSupportMid: 1200,
+    combinedSupportMid: 2020,
+    payorIncome: 95000,
+    recipientIncome: 55000,
+    section7Total: 550,
+    section7Payor: 330,
+    section7Recipient: 220,
+};
+
 const ResultsDisplay: React.FC = () => {
-    const childSupport = 820;
-    const spousalSupportLow = 950;
-    const spousalSupportHigh = 1450;
-    const spousalSupportMid = 1200;
-    const combinedSupportMid = 2020;
+    const {
+        childSupport,
+        spousalSupportLow,
+        spousalSupportHigh,
+        spousalSupportMid,
+        combinedSupportMid,
+        payorIncome,
+        recipientIncome,
+        section7Total,
+        section7Payor,
+        section7Recipient,
+    } = SAMPLE_RESULTS;
 
     return (
         <div className="space-y-6">
@@ -19,8 +39,12 @@ const ResultsDisplay: React.FC = () => {
                         <h2 className="text-2xl md:text-3xl font-bold text-white font-serif">Support Summary</h2>
                     </div>
                     <div className="text-xs text-slate-400 text-left sm:text-right space-y-1">
-                        <div>Payor Income: <span className="text-white">$95,000</span></div>
-                        <div>Recipient Income: <span className="text-white">$55,000</span></div>
+                        <div>
+                            Payor Income: <span className="text-white">{formatCurrency(payorIncome)}</span>
+                        </div>
+                        <div>
+                            Recipient Income: <span className="text-white">{formatCurrency(recipientIncome)}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -69,9 +93,9 @@ const ResultsDisplay: React.FC = () => {
                     <div className="bg-slate-900/80 rounded-xl border border-amber-400/50 p-4 shadow-inner shadow-amber-500/10">
                         <p className="text-xs uppercase tracking-[0.2em] text-amber-200 font-semibold mb-1">Section 7 Special Expenses (monthly)</p>
                         <div className="flex flex-wrap gap-4 text-sm text-slate-200">
-                            <span>Total: {formatCurrency(550)}</span>
-                            <span>Payor Share (60%): {formatCurrency(330)}</span>
-                            <span>Recipient Share (40%): {formatCurrency(220)}</span>
+                            <span>Total: {formatCurrency(section7Total)}</span>
+                            <span>Payor Share (60%): {formatCurrency(section7Payor)}</span>
+                            <span>Recipient Share (40%): {formatCurrency(section7Recipient)}</span>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">Shared pro rata to net incomes.</p>
                     </div>

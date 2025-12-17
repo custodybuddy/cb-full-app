@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { analyzeIncident, CustodyAIResponse } from '@/services/llmService';
+import { buildIncidentPrompt } from '@/utils/incident';
 
 export function useIncidentReporter() {
     const [loading, setLoading] = useState(false);
@@ -17,13 +18,8 @@ export function useIncidentReporter() {
             setError(null);
 
             try {
-                const enrichedNarrative = [
-                    `Date: ${input.date}`,
-                    `Location: ${input.location}`,
-                    `Incident: ${input.narrative}`,
-                ].join('\n');
                 const response = await analyzeIncident(
-                    enrichedNarrative,
+                    buildIncidentPrompt(input),
                     input.jurisdiction
                 );
 

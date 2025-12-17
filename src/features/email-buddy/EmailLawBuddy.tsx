@@ -3,37 +3,41 @@ import type { EmailBuddyResponse } from '@/types/ai';
 import EmailInputForm from './components/EmailInputForm';
 import GeneratedResponses from './components/GeneratedResponses';
 import EmailLoadingState from './components/EmailLoadingState';
-import { useEmailAnalysis } from './useEmailAnalysis';
+import { useEmailBuddy } from './useEmailBuddy';
+
+const DISCLAIMER_TEXT =
+    'Disclaimer: This document was created using artificial intelligence and is intended to provide helpful information. It is not a source of legal advice. We recommend that you verify the information for accuracy.';
+
+const EXAMPLE_EMAIL =
+    'You were 30 minutes late again. This is unacceptable and proves you do not respect our agreement. I will be changing next week’s pickup time and expect you to reimburse me for the extra childcare costs.';
+
+const EXAMPLE_RESPONSE: EmailBuddyResponse = {
+    originalTone: 'Demanding and accusatory, using time pressure and blame.',
+    keyDemands: [
+        'Change the next exchange time unilaterally.',
+        'Reimburse additional childcare expenses.',
+    ],
+    riskFlags: [
+        'Attempts to rewrite the schedule without mutual consent.',
+        'Blaming language that could escalate conflict.',
+    ],
+    biffReply:
+        'Thanks for the update. I will follow the current exchange schedule in our agreement. Please send any childcare receipts so I can review them promptly.',
+    greyRockReply:
+        'Noted. I will be at the scheduled exchange time. Send the childcare receipts when available.',
+    notesForCourt: [
+        'Message criticizes compliance and proposes a unilateral change.',
+        'Response focuses on the existing agreement and documentation.',
+    ],
+};
 
 const EmailLawBuddy: React.FC<{ isOpen?: boolean }> = () => {
-    const disclaimerText = 'Disclaimer: This document was created using artificial intelligence and is intended to provide helpful information. It is not a source of legal advice. We recommend that you verify the information for accuracy.';
-    const exampleEmail =
-        'You were 30 minutes late again. This is unacceptable and proves you do not respect our agreement. I will be changing next week’s pickup time and expect you to reimburse me for the extra childcare costs.';
-    const exampleResponse: EmailBuddyResponse = {
-        analysis: {
-            tone: 'Demanding and accusatory',
-            summary: 'The sender alleges missed pickup, changes the schedule, and requests reimbursement.',
-            key_demands: [
-                'Move the exchange time earlier for the birthday party.',
-                'Send payment for Section 7 expenses.',
-            ],
-            legal_jargon: [
-                { term: 'Right of First Refusal', context: 'Referenced in the schedule change request.' },
-                { term: 'Section 7 expenses', context: 'Requested reimbursement for shared child expenses.' },
-            ],
-        },
-        drafts: {
-            biff: 'Thanks for the update. I will follow the court-ordered exchange time and confirm the payment details.',
-            greyRock: 'Noted. The exchange time remains as ordered.',
-            friendlyAssertive: 'Thanks for the update. I will follow the ordered exchange time and can confirm payment once I receive receipts.',
-        },
-    };
     const [emailText, setEmailText] = useState('');
 
-    const { analyze, result, loading, error, reset } = useEmailAnalysis();
+    const { analyze, result, loading, error, reset } = useEmailBuddy();
 
     const handleSubmit = async () => {
-        await analyze(emailText);
+        await analyze({ rawEmail: emailText, jurisdiction: 'Ontario' });
     };
 
     const handleReset = () => {
@@ -47,7 +51,7 @@ const EmailLawBuddy: React.FC<{ isOpen?: boolean }> = () => {
                 value={emailText}
                 onChange={setEmailText}
                 onSubmit={handleSubmit}
-                onExample={() => setEmailText(exampleEmail)}
+                onExample={() => setEmailText(EXAMPLE_EMAIL)}
                 loading={loading}
             />
             {error && (
@@ -59,8 +63,8 @@ const EmailLawBuddy: React.FC<{ isOpen?: boolean }> = () => {
                 <EmailLoadingState />
             ) : (
                 <GeneratedResponses
-                    response={result || exampleResponse}
-                    disclaimer={disclaimerText}
+                    response={result || EXAMPLE_RESPONSE}
+                    disclaimer={DISCLAIMER_TEXT}
                     onReset={result ? handleReset : undefined}
                     resetDisabled={loading}
                 />

@@ -1,19 +1,29 @@
 import { useState, useCallback } from 'react';
-import { analyzeEmail, EmailBuddyResponse } from '@/services/llmService';
+import { analyzeEmailBuddy, EmailBuddyResponse } from '@/services/llmService';
 
-export function useEmailAnalysis() {
+type EmailBuddyInput = {
+    rawEmail: string;
+    jurisdiction: string;
+};
+
+export function useEmailBuddy() {
     const [result, setResult] = useState<EmailBuddyResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const analyze = useCallback(async (emailText: string) => {
+    const analyze = useCallback(async (input: EmailBuddyInput) => {
         setLoading(true);
         setError(null);
+        setResult(null);
+
         try {
-            const response = await analyzeEmail(emailText);
-            setResult(response);
+            const data = await analyzeEmailBuddy(input);
+            setResult(data);
+            return data;
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Analysis failed');
+            const msg = err instanceof Error ? err.message : 'Email analysis failed.';
+            setError(msg);
+            return null;
         } finally {
             setLoading(false);
         }

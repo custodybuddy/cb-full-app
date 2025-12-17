@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useIncidentAnalysis } from '@/features/incident-report/useIncidentAnalysis';
+import { buildIncidentPrompt } from '@/utils/incident';
 
 export function IncidentAnalyzer() {
     const [narrative, setNarrative] = useState('');

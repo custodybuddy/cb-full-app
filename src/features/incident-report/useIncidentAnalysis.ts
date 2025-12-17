@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
 import { analyzeIncident, CustodyAIResponse } from '@/services/llmService';
+import { buildIncidentPrompt } from '@/utils/incident';
 
-type IncidentFormInput = {
+export type IncidentFormInput = {
     date: string;
     time?: string;
     location?: string;
@@ -20,18 +21,9 @@ export function useIncidentAnalysis() {
         setError(null);
         setResult(null);
 
-        const mergedNarrative = `
-Date: ${input.date}${input.time ? ` ${input.time}` : ''}
-Location: ${input.location || 'N/A'}
-Parties: ${input.parties || 'N/A'}
-
-Incident narrative:
-${input.narrative}
-        `.trim();
-
         try {
             const aiResult = await analyzeIncident(
-                mergedNarrative,
+                buildIncidentPrompt(input),
                 input.jurisdiction
             );
             setResult(aiResult);
