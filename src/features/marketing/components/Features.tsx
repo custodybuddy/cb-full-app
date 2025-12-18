@@ -79,8 +79,17 @@ const featureIcons: Record<FeatureIcon, React.ReactNode> = {
 
 const Features: React.FC = () => {
     return (
-        <section id="features" className="bg-slate-950 py-12 md:py-20">
-            <div className="container mx-auto px-4 text-center">
+        <section id="features" className="bg-slate-950 py-12 md:py-20 relative overflow-hidden">
+            <div
+                className="pointer-events-none absolute inset-0 opacity-[0.08]"
+                style={{
+                    backgroundImage:
+                        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.7'/></svg>\")",
+                    backgroundRepeat: 'repeat',
+                }}
+                aria-hidden="true"
+            />
+            <div className="container mx-auto px-4 text-center relative z-10">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 animate-fade-in-up">
                     <span className="text-amber-400">AI Tools</span> to<span className="text-amber-400"> Level</span> the<span className="text-amber-400"> <i>Playing Field</i></span>.
                 </h2>
@@ -91,8 +100,17 @@ const Features: React.FC = () => {
                     {features.map((feature, index) => (
                         <Card
                             key={index}
-                            className={`h-full p-8 flex flex-col items-center animate-fade-in-up delay-${index * 100} transition-all duration-300 ease-out hover:bg-slate-700/80 motion-safe:hover:-translate-y-2 motion-safe:hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-400/15 border border-amber-400/50 hover:border-amber-400 hover:ring-2 hover:ring-amber-400/25`}
+                            className={`relative h-full p-8 flex flex-col items-center animate-fade-in-up delay-${index * 100} transition-all duration-300 ease-out hover:bg-slate-700/80 motion-safe:hover:-translate-y-2 motion-safe:hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-400/15 border border-amber-400/50 hover:border-amber-400 hover:ring-2 hover:ring-amber-400/25`}
                         >
+                            <div
+                                className="pointer-events-none absolute inset-0 opacity-[0.12] rounded-2xl"
+                                style={{
+                                    backgroundImage:
+                                        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='1' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.6'/></svg>\")",
+                                    backgroundRepeat: 'repeat',
+                                }}
+                                aria-hidden="true"
+                            />
                             <div className="p-4 rounded-full bg-amber-400 text-slate-900 mb-4 relative">
                                 {feature.badge && (
                                     <span className="absolute -top-2 -right-2 bg-slate-950 text-amber-300 text-[10px] font-semibold uppercase tracking-[0.2em] px-3 py-1 rounded-full border border-amber-400">

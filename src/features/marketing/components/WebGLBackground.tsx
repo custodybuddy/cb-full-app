@@ -15,18 +15,25 @@ const WebGLBackground: React.FC = () => {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         containerRef.current.appendChild(renderer.domElement);
 
-        const particlesCount = 200;
+        const particlesCount = 250;
         const positions = new Float32Array(particlesCount * 3);
-        const velocities = new Float32Array(particlesCount * 3);
+        const initialPositions = new Float32Array(particlesCount * 3);
+        const randomOffsets = new Float32Array(particlesCount);
 
         for (let i = 0; i < particlesCount; i += 1) {
-            positions[i * 3] = (Math.random() - 0.5) * 50;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+            const x = (Math.random() - 0.5) * 60;
+            const y = (Math.random() - 0.5) * 60;
+            const z = (Math.random() - 0.5) * 40;
 
-            velocities[i * 3] = (Math.random() - 0.5) * 0.02;
-            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
-            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+            positions[i * 3] = x;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
+
+            initialPositions[i * 3] = x;
+            initialPositions[i * 3 + 1] = y;
+            initialPositions[i * 3 + 2] = z;
+
+            randomOffsets[i] = Math.random() * Math.PI * 2;
         }
 
         const geometry = new THREE.BufferGeometry();
@@ -34,9 +41,9 @@ const WebGLBackground: React.FC = () => {
 
         const material = new THREE.PointsMaterial({
             color: 0xffd700,
-            size: 0.15,
+            size: 0.18,
             transparent: true,
-            opacity: 0.4,
+            opacity: 0.5,
             blending: THREE.AdditiveBlending,
         });
 
@@ -46,13 +53,13 @@ const WebGLBackground: React.FC = () => {
         const lineMaterial = new THREE.LineBasicMaterial({
             color: 0xffd700,
             transparent: true,
-            opacity: 0.05,
+            opacity: 0.08,
             blending: THREE.AdditiveBlending,
         });
 
         let lineSegments: THREE.LineSegments | null = null;
 
-        camera.position.z = 30;
+        camera.position.z = 35;
 
         let mouseX = 0;
         let mouseY = 0;
@@ -60,50 +67,66 @@ const WebGLBackground: React.FC = () => {
         let targetY = 0;
 
         const handleMouseMove = (event: MouseEvent) => {
-            mouseX = (event.clientX / window.innerWidth - 0.5) * 10;
-            mouseY = (event.clientY / window.innerHeight - 0.5) * 10;
+            mouseX = (event.clientX / window.innerWidth - 0.5) * 12;
+            mouseY = (event.clientY / window.innerHeight - 0.5) * 12;
         };
 
         window.addEventListener('mousemove', handleMouseMove);
 
         const animate = () => {
+            const time = Date.now() * 0.0008;
             requestAnimationFrame(animate);
 
             targetX += (mouseX - targetX) * 0.05;
             targetY += (mouseY - targetY) * 0.05;
 
-            points.rotation.y += 0.001;
-            points.rotation.x += 0.0005;
+            points.rotation.y = time * 0.05;
 
-            scene.rotation.y = targetX * 0.1;
-            scene.rotation.x = -targetY * 0.1;
+            scene.rotation.y = targetX * 0.05;
+            scene.rotation.x = -targetY * 0.05;
+
+            material.size = 0.18 + Math.sin(time * 2) * 0.05;
+            material.opacity = 0.4 + Math.sin(time) * 0.1;
+            lineMaterial.opacity = 0.07 + Math.sin(time * 0.6) * 0.02;
 
             const posAttr = geometry.attributes.position;
             for (let i = 0; i < particlesCount; i += 1) {
-                posAttr.setX(i, posAttr.getX(i) + velocities[i * 3]);
-                posAttr.setY(i, posAttr.getY(i) + velocities[i * 3 + 1]);
-                posAttr.setZ(i, posAttr.getZ(i) + velocities[i * 3 + 2]);
+                const ix = initialPositions[i * 3];
+                const iy = initialPositions[i * 3 + 1];
+                const iz = initialPositions[i * 3 + 2];
+                const offset = randomOffsets[i];
 
-                if (Math.abs(posAttr.getX(i)) > 25) velocities[i * 3] *= -1;
-                if (Math.abs(posAttr.getY(i)) > 25) velocities[i * 3 + 1] *= -1;
-                if (Math.abs(posAttr.getZ(i)) > 25) velocities[i * 3 + 2] *= -1;
+                const waveX = Math.sin(time + iy * 0.1 + offset) * 0.5;
+                const waveY = Math.cos(time + ix * 0.1 + offset) * 0.5;
+                const waveZ = Math.sin(time * 0.5 + (ix + iy) * 0.05) * 1.5;
+
+                posAttr.setX(i, ix + waveX);
+                posAttr.setY(i, iy + waveY);
+                posAttr.setZ(i, iz + waveZ);
             }
             posAttr.needsUpdate = true;
 
-            if (lineSegments) scene.remove(lineSegments);
+            if (lineSegments) {
+                scene.remove(lineSegments);
+                lineSegments.geometry.dispose();
+            }
 
             const linePositions: number[] = [];
-            const threshold = 8;
+            const threshold = 10;
+            const maxConnections = 2;
+
             for (let i = 0; i < particlesCount; i += 1) {
-                for (let j = i + 1; j < particlesCount; j += 1) {
+                let connections = 0;
+                for (let j = i + 1; j < particlesCount && connections < maxConnections; j += 1) {
                     const dx = posAttr.getX(i) - posAttr.getX(j);
                     const dy = posAttr.getY(i) - posAttr.getY(j);
                     const dz = posAttr.getZ(i) - posAttr.getZ(j);
-                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    const distSq = dx * dx + dy * dy + dz * dz;
 
-                    if (dist < threshold) {
+                    if (distSq < threshold * threshold) {
                         linePositions.push(posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i));
                         linePositions.push(posAttr.getX(j), posAttr.getY(j), posAttr.getZ(j));
+                        connections += 1;
                     }
                 }
             }
@@ -134,10 +157,13 @@ const WebGLBackground: React.FC = () => {
             }
             scene.clear();
             renderer.dispose();
+            geometry.dispose();
+            material.dispose();
+            lineMaterial.dispose();
         };
     }, []);
 
-    return <div ref={containerRef} className="fixed inset-0 z-0 pointer-events-none opacity-40" />;
+    return <div ref={containerRef} className="fixed inset-0 z-0 pointer-events-none opacity-50" />;
 };
 
 export default WebGLBackground;
