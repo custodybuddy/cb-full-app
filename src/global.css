@@ -26,8 +26,8 @@ h1 {
 /* Shared card styling */
 .card {
     background-color: #1a2236;
-    border: 1px solid #2a3548;
     border-radius: 12px;
+    border-width: 0.3px;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;

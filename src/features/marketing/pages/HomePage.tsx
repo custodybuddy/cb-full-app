@@ -7,6 +7,7 @@ const Testimonials = lazy(() => import('../components/Testimonials'));
 const Resources = lazy(() => import('@/features/resources/Resources'));
 const DonationLazy = lazy(() => import('../components/Donation'));
 const CTALazy = lazy(() => import('../components/CTA'));
+const FAQLazy = lazy(() => import('../components/FAQ'));
 
 const HomePage: React.FC = () => {
     return (
@@ -24,6 +25,9 @@ const HomePage: React.FC = () => {
             </Suspense>
             <Suspense fallback={null}>
                 <CTALazy />
+            </Suspense>
+            <Suspense fallback={null}>
+                <FAQLazy />
             </Suspense>
             <Contact />
         </>

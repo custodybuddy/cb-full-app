@@ -2,10 +2,12 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 
 const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY;
+const DEEPSEEK_BASE_URL = import.meta.env.VITE_DEEPSEEK_BASE_URL || 'https://api.deepseek.com';
+
 const deepseekClient = DEEPSEEK_API_KEY
     ? new OpenAI({
           apiKey: DEEPSEEK_API_KEY,
-          baseURL: typeof window === 'undefined' ? 'http://localhost:3000/api/deepseek' : `${window.location.origin}/api/deepseek`,
+          baseURL: DEEPSEEK_BASE_URL,
           dangerouslyAllowBrowser: true,
       })
     : null;
