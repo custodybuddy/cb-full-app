@@ -4,10 +4,22 @@ import CheckCheckIcon from '@/components/icons/CheckCheckIcon';
 import ShieldCheckIcon from '@/components/icons/ShieldCheckIcon';
 import WebGLBackground from './WebGLBackground';
 
+const NOISE_TEXTURE =
+    "url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAArklEQVR4Ae3VQQrCQBBF0Sn//zZuIhqQYdI04MYQ/uxUULgmIpR2m9F9DA7K5wDcfVqvXz7P50A8zDCqRQhC0pgWR5F7pFU03SMMdEINZIohpEIJ7c3Xk8yvYwzBrOGwozW8k5DXJfG70YVd4KzPh1QFCjF8AA9U6vvl0nrsVj2wTaNGkReSwI/lJjWz5E2vWM0ZPkJZkENzow6Lx81pT7yL6k96tZKcS1aDQLEo6N3n2yfo4b8nzjA43f8sVTc8o4V4yRXTKP1PK5zhfZ9zF6AAAAAElFTkSuQmCC\")";
+
 const Hero: React.FC = () => {
     return (
         <section className="flex items-center justify-center pt-32 pb-12 md:pt-40 md:pb-16 text-center relative overflow-hidden">
             <WebGLBackground />
+            <div
+                className="pointer-events-none absolute inset-0 opacity-30 mix-blend-soft-light"
+                style={{
+                    backgroundImage: NOISE_TEXTURE,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: 'auto',
+                }}
+                aria-hidden="true"
+            />
             <div
                 className="absolute inset-0 opacity-20 mix-blend-soft-light"
                 style={{

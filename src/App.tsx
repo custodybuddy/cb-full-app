@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import NewsletterSignup from '@/components/NewsletterSignup';
 import { routes, externalLinks, NavLink } from '@/routes';
 import SpinnerIcon from '@/components/icons/SpinnerIcon';
 
@@ -56,6 +57,7 @@ const App: React.FC = () => {
                     </Routes>
                 </Suspense>
             </main>
+            <NewsletterSignup />
             <Footer currentPath={currentPath} navLinks={footerNavLinks} />
         </div>
     );
