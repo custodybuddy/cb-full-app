@@ -19,6 +19,7 @@ const WebGLBackground: React.FC = () => {
         const positions = new Float32Array(particlesCount * 3);
         const initialPositions = new Float32Array(particlesCount * 3);
         const randomOffsets = new Float32Array(particlesCount);
+        const colorOffsets = new Float32Array(particlesCount);
 
         for (let i = 0; i < particlesCount; i += 1) {
             const x = (Math.random() - 0.5) * 60;
@@ -34,13 +35,16 @@ const WebGLBackground: React.FC = () => {
             initialPositions[i * 3 + 2] = z;
 
             randomOffsets[i] = Math.random() * Math.PI * 2;
+            colorOffsets[i] = Math.random() * Math.PI * 2;
         }
 
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const colors = new Float32Array(particlesCount * 3);
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
         const material = new THREE.PointsMaterial({
-            color: 0xffd700,
+            vertexColors: true,
             size: 0.18,
             transparent: true,
             opacity: 0.5,
@@ -90,11 +94,13 @@ const WebGLBackground: React.FC = () => {
             lineMaterial.opacity = 0.07 + Math.sin(time * 0.6) * 0.02;
 
             const posAttr = geometry.attributes.position;
+            const colorAttr = geometry.attributes.color;
             for (let i = 0; i < particlesCount; i += 1) {
                 const ix = initialPositions[i * 3];
                 const iy = initialPositions[i * 3 + 1];
                 const iz = initialPositions[i * 3 + 2];
                 const offset = randomOffsets[i];
+                const colorOffset = colorOffsets[i];
 
                 const waveX = Math.sin(time + iy * 0.1 + offset) * 0.5;
                 const waveY = Math.cos(time + ix * 0.1 + offset) * 0.5;
@@ -103,8 +109,16 @@ const WebGLBackground: React.FC = () => {
                 posAttr.setX(i, ix + waveX);
                 posAttr.setY(i, iy + waveY);
                 posAttr.setZ(i, iz + waveZ);
+
+                // Interpolate between warm yellow and soft white for a subtle drift effect.
+                const blend = 0.5 + Math.sin(time * 0.6 + colorOffset) * 0.5;
+                const yellow = new THREE.Color(0xffd700);
+                const white = new THREE.Color(0xffffff);
+                const mixed = yellow.clone().lerp(white, blend);
+                colorAttr.setXYZ(i, mixed.r, mixed.g, mixed.b);
             }
             posAttr.needsUpdate = true;
+            colorAttr.needsUpdate = true;
 
             if (lineSegments) {
                 scene.remove(lineSegments);
