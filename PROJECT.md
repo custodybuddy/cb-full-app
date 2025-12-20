@@ -97,7 +97,7 @@ Hooks never talk directly to providers; they only import from `llmService`.
 
 Each feature has a primary page component in its folder, wired to the hook:
 
-- `IncidentReportPage.tsx` (report-incident)
+- `IncidentReportPage.tsx` (incident-report)
 - `EmailBuddyPage.tsx` (email-buddy)
 - `CaseAnalysisPage.tsx` (case-analysis)
 - `SupportCalculatorPage.tsx` (support-calculator)
@@ -164,4 +164,3 @@ When asked to add a new feature (e.g., a new legal helper):
 5. **Add a route** in `src/routes.ts` pointing to the new page.
 
 The LLM should **never bypass `llmService.ts`**, should maintain the stateless privacy model, and should preserve the “education, clarity, documentation—not legal advice” boundary in all new prompts.
-

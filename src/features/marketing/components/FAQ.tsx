@@ -33,34 +33,7 @@ const faqs: FAQItem[] = [
 ];
 
 const FAQ: React.FC = () => {
-    return (
-        <section className="bg-slate-950 py-16 md:py-20 border-t border-slate-800">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-10 md:mb-14 space-y-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-400">
-                        Frequently Asked Questions
-                    </p>
-                    <h2 className="text-3xl md:text-4xl font-black text-white">
-                        Clarity before you click
-                    </h2>
-                    <p className="text-slate-300 max-w-2xl mx-auto text-sm md:text-base">
-                        Quick answers on privacy, scope, and how the AI fits into your workflow.
-                    </p>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                    {faqs.map(item => (
-                        <div
-                            key={item.question}
-                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 shadow-lg shadow-black/20"
-                        >
-                            <h3 className="text-lg font-semibold text-white mb-2">{item.question}</h3>
-                            <p className="text-sm text-slate-300 leading-relaxed">{item.answer}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+    return null;
 };
 
 export default FAQ;

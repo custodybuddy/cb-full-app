@@ -63,11 +63,12 @@ The application follows a **Context-Service-UI** pattern:
 
 ```text
 /
-├── components/          # UI Building Blocks
-│   ├── case-analysis/   # File upload & Analysis display
+├── components/          # UI building blocks (Header, Footer, shared UI)
+├── features/            # Product experiences
+│   ├── case-analysis/   # File upload & analysis display
 │   ├── email-buddy/     # Email drafting & tone switching
-│   ├── report-incident/ # Incident form & Report display
-│   └── [Shared]         # Modals, Header, Footer
+│   ├── incident-report/ # Incident form & report display
+│   └── [others]         # Calculators, resources, onboarding
 ├── contexts/            # Global State (Context API)
 ├── services/            # API Communication (openaiService)
 ├── hooks/               # Custom React Hooks

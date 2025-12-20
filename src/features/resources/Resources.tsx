@@ -1,13 +1,13 @@
 import React from 'react';
 import BookList from './components/BookList';
-import LegalAidList from './components/LegalAidList';
+import LegalTermsLookup from './components/LegalTermsLookup';
 
 const Resources: React.FC = () => {
     return (
         <section id="recommended-resources" className="py-16 md:py-24 bg-slate-950 overflow-hidden">
             <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
                 <BookList />
-                <LegalAidList />
+                <LegalTermsLookup />
             </div>
         </section>
     );
