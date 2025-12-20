@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, useMemo } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -22,30 +22,36 @@ const PageFallback: React.FC = () => (
 
 
 const App: React.FC = () => {
-    const currentPath = '/';
+    const { pathname } = useLocation();
 
     // Logic to prepare links for Header and Footer
-    const headerNavLinks: NavLink[] = [
-        ...routes
-            .filter(r => r.inHeader)
-            .map(r => ({ href: r.path, text: r.label, isExternal: false })),
-        ...externalLinks
-            .filter(l => l.inHeader)
-            .map(l => ({ href: l.href, text: l.text, isExternal: true }))
-    ];
+    const headerNavLinks: NavLink[] = useMemo(
+        () => [
+            ...routes
+                .filter(r => r.inHeader)
+                .map(r => ({ href: r.path, text: r.label, isExternal: false })),
+            ...externalLinks
+                .filter(l => l.inHeader)
+                .map(l => ({ href: l.href, text: l.text, isExternal: true }))
+        ],
+        []
+    );
 
-    const footerNavLinks: NavLink[] = [
-        ...routes
-            .filter(r => r.inFooter)
-            .map(r => ({ href: r.path, text: r.label, isExternal: false })),
-        ...externalLinks
-            .filter(l => l.inFooter)
-            .map(l => ({ href: l.href, text: l.text, isExternal: true }))
-    ];
+    const footerNavLinks: NavLink[] = useMemo(
+        () => [
+            ...routes
+                .filter(r => r.inFooter)
+                .map(r => ({ href: r.path, text: r.label, isExternal: false })),
+            ...externalLinks
+                .filter(l => l.inFooter)
+                .map(l => ({ href: l.href, text: l.text, isExternal: true }))
+        ],
+        []
+    );
 
     return (
         <div className="bg-slate-900 text-white">
-            <Header currentPath={currentPath} navLinks={headerNavLinks} />
+            <Header currentPath={pathname} navLinks={headerNavLinks} />
             <main>
                 <Suspense fallback={<PageFallback />}>
                     <Routes>
@@ -58,7 +64,7 @@ const App: React.FC = () => {
                 </Suspense>
             </main>
             <NewsletterSignup />
-            <Footer currentPath={currentPath} navLinks={footerNavLinks} />
+            <Footer currentPath={pathname} navLinks={footerNavLinks} />
         </div>
     );
 };

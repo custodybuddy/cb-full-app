@@ -14,6 +14,7 @@
 - `npm run test`: run Vitest once in CI mode.
 - `RUN_LIVE_AI_TESTS=1 npm run test -- services/llmService.test.ts`: run live LLM integration tests (requires API keys and network access).
 - `npm run lint`: lint `src/` and `tests/` with ESLint.
+- Run lint or tests before UI work when possible; prioritize fixing regressions in landing page interactions (Hero, Navbar, Footer) before adding new features.
 
 ## Coding Style & Naming Conventions
 - TypeScript + React (ES modules). Use 4-space indentation and single quotes; keep semicolons consistent with existing files.
@@ -32,3 +33,6 @@
 ## Configuration Notes
 - Vite env vars must be prefixed with `VITE_`. Do not commit secrets; use local `.env` files.
 - LLM-powered features (`analyzeIncident`, `analyzeEmailBuddy`, `analyzeCaseDocuments`) run client-side for dev/testing; rotate keys and proxy through a server for production.
+- Hero is a multi-layered composition (Three.js background, scroll-triggered staggered animations, parallax icons). Keep the “Z-axis” depth intact and maintain readability against the dark noise/gradient overlays when modifying.
+- Navbar mobile menu uses a sliding panel with a fading overlay—preserve smooth transitions if altering navigation.
+- Footer now includes legal terminology lookup; avoid reintroducing removed “Find legal aid in your province” section.

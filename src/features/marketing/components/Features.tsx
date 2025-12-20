@@ -14,6 +14,7 @@ interface Feature {
     icon: FeatureIcon;
     title: React.ReactNode;
     description: string;
+    stats?: string[];
     buttonText: string;
     link: string;
     isModal: boolean;
@@ -26,6 +27,7 @@ const features: Feature[] = [
         icon: 'CalendarCheck',
         title: <>Report An Incident: <span className="text-amber-400">Catch Them</span> Red-Handed.</>,
         description: 'Transform toxic behavior into court-ready evidence with guided documentation, timestamps, and professional exports.',
+        stats: ['Up to 50% reduction in court time', 'Log 10x more details with prompts', 'Export in court-ready format'],
         buttonText: 'DOCUMENT THEIR LIES',
         link: '/incident-report',
         isModal: false,
@@ -35,6 +37,7 @@ const features: Feature[] = [
         icon: 'Swords',
         title: <>Family Law Case Analysis Tool: Level the <span className="text-amber-400">Playing Field</span>.</>,
         description: 'Decode legal documents with AI analysis, get plain English explanations, and receive next-step recommendations.',
+        stats: ['90% faster to spot contradictions', 'Plain-language briefs in minutes', 'Next steps tailored to your facts'],
         buttonText: 'EXPOSE THE TRUTH',
         link: '/case-analysis',
         isModal: false,
@@ -44,6 +47,7 @@ const features: Feature[] = [
         icon: 'MailPlus',
         title: <>Email Law Buddy: <span className="text-amber-400">Shut Down</span> the Games.</>,
         description: 'Stop emotional manipulation with professional, AI-drafted responses that maintain composure and build your legal case.',
+        stats: ['Cuts response drafting time by 70%', 'Keeps tone compliant with court orders', 'Auto-flags manipulative language'],
         buttonText: 'STOP THE GAMES',
         link: '/email-buddy',
         isModal: false,
@@ -123,6 +127,22 @@ const Features: React.FC = () => {
                                 {feature.title}
                             </h3>
                             <p className="text-gray-400 mb-4 flex-grow text-balance">{feature.description}</p>
+                            {feature.stats && (
+                                <div className="w-full mb-4 space-y-2">
+                                    <p className="text-xs uppercase tracking-[0.2em] text-amber-300/80">Key Wins</p>
+                                    <div className="grid gap-2">
+                                        {feature.stats.map(item => (
+                                            <div
+                                                key={item}
+                                                className="flex items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-3 py-2 text-left"
+                                            >
+                                                <span className="mt-[2px] h-2 w-2 rounded-full bg-amber-400/80" />
+                                                <p className="text-sm text-slate-100 leading-snug">{item}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                             {feature.isModal ? (
                                 <Button
                                     className="mt-auto"

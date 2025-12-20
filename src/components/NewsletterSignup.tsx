@@ -5,6 +5,8 @@ const NewsletterSignup: React.FC = () => {
     const [email, setEmail] = React.useState('');
     const [isCelebrating, setIsCelebrating] = React.useState(false);
     const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+    const resizeTimeoutRef = React.useRef<number | null>(null);
+    const confettiTimeoutRef = React.useRef<number | null>(null);
 
     React.useEffect(() => {
         const updateSize = () => {
@@ -14,17 +16,40 @@ const NewsletterSignup: React.FC = () => {
             });
         };
 
+        const debouncedUpdate = () => {
+            if (resizeTimeoutRef.current) {
+                window.clearTimeout(resizeTimeoutRef.current);
+            }
+            resizeTimeoutRef.current = window.setTimeout(updateSize, 120);
+        };
+
         updateSize();
-        window.addEventListener('resize', updateSize);
-        return () => window.removeEventListener('resize', updateSize);
+        window.addEventListener('resize', debouncedUpdate);
+        return () => {
+            window.removeEventListener('resize', debouncedUpdate);
+            if (resizeTimeoutRef.current) {
+                window.clearTimeout(resizeTimeoutRef.current);
+            }
+        };
     }, []);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsCelebrating(true);
-        setTimeout(() => setIsCelebrating(false), 2000);
+        if (confettiTimeoutRef.current) {
+            window.clearTimeout(confettiTimeoutRef.current);
+        }
+        confettiTimeoutRef.current = window.setTimeout(() => setIsCelebrating(false), 2000);
         setEmail('');
     };
+
+    React.useEffect(() => {
+        return () => {
+            if (confettiTimeoutRef.current) {
+                window.clearTimeout(confettiTimeoutRef.current);
+            }
+        };
+    }, []);
 
     return (
         <section className="bg-slate-950 border-t border-b border-slate-800 py-14 sm:py-16">

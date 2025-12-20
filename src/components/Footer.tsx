@@ -64,59 +64,37 @@ const Footer: React.FC<FooterProps> = ({ currentPath, navLinks, "aria-hidden": a
     return (
         <footer className="bg-slate-900 py-8 text-center text-gray-400 border-t border-slate-800" aria-hidden={ariaHidden}>
             <div className="container mx-auto px-4">
-                <div className="mb-8 max-w-5xl mx-auto text-left">
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        <div className="rounded-2xl border border-amber-400/30 bg-slate-950/70 p-5 shadow-lg shadow-amber-400/10">
-                            <h2 className="text-lg font-semibold text-white mb-2">Find legal aid in your province</h2>
-                            <p className="text-sm text-slate-300 mb-4">
-                                Search local legal aid resources by province so you can connect with the right support faster.
-                            </p>
-                            <form className="flex flex-col gap-3 sm:flex-row sm:items-center" onSubmit={handleAidSearch}>
-                                <input
-                                    type="text"
-                                    placeholder="Enter your province"
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
-                                />
-                                <button
-                                    type="submit"
-                                    className="w-full sm:w-auto rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                                >
-                                    Search
-                                </button>
-                            </form>
-                        </div>
-
-                        <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5 shadow-lg shadow-slate-900/40">
-                            <h2 className="text-lg font-semibold text-white mb-2">Look up legal terms</h2>
-                            <p className="text-sm text-slate-300 mb-4">
-                                Get quick explanations for common family law terms so you can read documents with confidence.
-                            </p>
-                            <div className="flex flex-col gap-3">
-                                <label className="sr-only" htmlFor="legal-terms-search">
-                                    Search legal terms
-                                </label>
-                                <input
-                                    id="legal-terms-search"
-                                    type="search"
-                                    value={termQuery}
-                                    onChange={event => setTermQuery(event.target.value)}
-                                    placeholder="Search legal terminology (e.g., service, parenting plan)"
-                                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
-                                />
-                                <div className="space-y-3 max-h-64 overflow-auto pr-1">
-                                    {filteredTerms.length === 0 ? (
-                                        <p className="text-sm text-slate-400">No terms found. Try another keyword.</p>
-                                    ) : (
-                                        filteredTerms.map(item => (
-                                            <div key={item.term} className="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <p className="text-sm font-semibold text-white">{item.term}</p>
-                                                </div>
-                                                <p className="text-sm text-slate-300 mt-1 leading-relaxed">{item.definition}</p>
+                <div className="mb-8 max-w-3xl mx-auto text-left">
+                    <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5 shadow-lg shadow-slate-900/40">
+                        <h2 className="text-lg font-semibold text-white mb-2">Look up legal terms</h2>
+                        <p className="text-sm text-slate-300 mb-4">
+                            Get quick explanations for common family law terms so you can read documents with confidence.
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <label className="sr-only" htmlFor="legal-terms-search">
+                                Search legal terms
+                            </label>
+                            <input
+                                id="legal-terms-search"
+                                type="search"
+                                value={termQuery}
+                                onChange={event => setTermQuery(event.target.value)}
+                                placeholder="Search legal terminology (e.g., service, parenting plan)"
+                                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
+                            />
+                            <div className="space-y-3 max-h-64 overflow-auto pr-1">
+                                {filteredTerms.length === 0 ? (
+                                    <p className="text-sm text-slate-400">No terms found. Try another keyword.</p>
+                                ) : (
+                                    filteredTerms.map(item => (
+                                        <div key={item.term} className="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <p className="text-sm font-semibold text-white">{item.term}</p>
                                             </div>
-                                        ))
-                                    )}
-                                </div>
+                                            <p className="text-sm text-slate-300 mt-1 leading-relaxed">{item.definition}</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
@@ -151,8 +129,8 @@ const Footer: React.FC<FooterProps> = ({ currentPath, navLinks, "aria-hidden": a
                 </nav>
 
                 <p className="text-sm">&copy; {new Date().getFullYear()} CustodyBuddy.com. All Rights Reserved.</p>
-                <p className="text-xs mt-4 max-w-4xl mx-auto">
-                    **Disclaimer: CustodyBuddy is for informational purposes only and is not a substitute for a qualified legal professional. The use of this tool does not create a lawyer-client relationship.**
+                <p className="text-xs mt-4 max-w-4xl mx-auto font-medium text-slate-300">
+                    Disclaimer: CustodyBuddy is for informational purposes only and is not a substitute for a qualified legal professional. The use of this tool does not create a lawyer-client relationship.
                 </p>
             </div>
         </footer>
